@@ -1,11 +1,16 @@
 """Repositories for approval requests and decisions (05_DATA_SPEC §3.4, §3.5).
 
-``ApprovalRequestRepository`` is read + insert only in Phase 2. The single
-locked state transition (``update_state_with_lock``) is added by the Phase 5
-``ApprovalService`` and is deliberately NOT present here.
+``ApprovalRequestRepository`` supports read, insert, and a single optimistic
+locked state transition (``update_state_with_lock``, C-22). All other state
+changes are forbidden by construction.
 
 ``ApprovalDecisionRepository`` is append-only (decisions are immutable;
 ``approval_decisions`` has append-only triggers, C-10).
+
+Write methods accept ``commit`` (default True). The Phase 5 ``ApprovalService``
+passes ``commit=False`` so that a decision insert, the state update, and the
+audit event all land in one transaction (C-23); standalone callers keep the
+default auto-commit behavior.
 """
 
 from __future__ import annotations
@@ -29,7 +34,7 @@ class ApprovalRequestRepository:
         # the connection (not just via storage.db.get_connection).
         self._conn.row_factory = sqlite3.Row
 
-    def insert(self, request: ApprovalRequest) -> None:
+    def insert(self, request: ApprovalRequest, *, commit: bool = True) -> None:
         """Insert one approval request. Raises StorageError on conflict."""
         try:
             self._conn.execute(
@@ -55,9 +60,39 @@ class ApprovalRequestRepository:
                     request.version,
                 ),
             )
-            self._conn.commit()
+            if commit:
+                self._conn.commit()
         except sqlite3.IntegrityError as exc:
             raise StorageError(f"approval_requests insert failed: {exc}") from exc
+
+    def update_state_with_lock(
+        self,
+        request_id: str,
+        expected_version: int,
+        new_state: str,
+        *,
+        commit: bool = True,
+    ) -> bool:
+        """Atomically transition state iff version matches and still pending.
+
+        Optimistic lock (C-22): the ``version = ?`` guard rejects stale
+        writers, and ``state = 'pending'`` prevents transitioning out of a
+        terminal state even with a matching version. Returns True iff exactly
+        one row was updated (version is incremented on success).
+        """
+        cursor = self._conn.execute(
+            """
+            UPDATE approval_requests
+               SET state = ?, version = version + 1
+             WHERE request_id = ?
+               AND version = ?
+               AND state = 'pending'
+            """,
+            (new_state, request_id, expected_version),
+        )
+        if commit:
+            self._conn.commit()
+        return cursor.rowcount == 1
 
     def get_by_id(self, request_id: str) -> ApprovalRequest | None:
         """Return the request with ``request_id``, or None if absent."""
@@ -65,6 +100,15 @@ class ApprovalRequestRepository:
             "SELECT * FROM approval_requests WHERE request_id = ?", (request_id,)
         ).fetchone()
         return self._row_to_model(row) if row else None
+
+    def get_by_id_with_version(
+        self, request_id: str
+    ) -> tuple[ApprovalRequest, int] | None:
+        """Return ``(request, current_version)`` or None, for lock retries."""
+        request = self.get_by_id(request_id)
+        if request is None:
+            return None
+        return request, request.version
 
     def list_pending(self, role: str | None = None) -> list[ApprovalRequest]:
         """Return pending requests, optionally filtered by assignee role."""
@@ -103,7 +147,7 @@ class ApprovalDecisionRepository:
         # the connection (not just via storage.db.get_connection).
         self._conn.row_factory = sqlite3.Row
 
-    def insert(self, decision: ApprovalDecision) -> None:
+    def insert(self, decision: ApprovalDecision, *, commit: bool = True) -> None:
         """Insert one approval decision. Raises StorageError on conflict."""
         edits = canonical_json(decision.edits) if decision.edits is not None else None
         try:
@@ -125,7 +169,8 @@ class ApprovalDecisionRepository:
                     decision.decided_at.isoformat(),
                 ),
             )
-            self._conn.commit()
+            if commit:
+                self._conn.commit()
         except sqlite3.IntegrityError as exc:
             raise StorageError(f"approval_decisions insert failed: {exc}") from exc
 

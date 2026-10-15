@@ -40,8 +40,13 @@ class AuditRepository:
         # the connection (not just via storage.db.get_connection).
         self._conn.row_factory = sqlite3.Row
 
-    def append(self, event: AuditEvent) -> None:
-        """Insert one audit event. No update path exists by design."""
+    def append(self, event: AuditEvent, *, commit: bool = True) -> None:
+        """Insert one audit event. No update path exists by design.
+
+        ``commit=False`` lets the event participate in a caller-managed
+        transaction (e.g. the approval service's single-transaction writes,
+        C-23); the default commits immediately.
+        """
         self._conn.execute(
             """
             INSERT INTO audit_events (
@@ -61,7 +66,8 @@ class AuditRepository:
                 canonical_json(event.payload),
             ),
         )
-        self._conn.commit()
+        if commit:
+            self._conn.commit()
 
     def query(self, filters: dict[str, Any] | None = None) -> list[AuditEvent]:
         """Return audit events matching equality ``filters`` (ordered by rowid).

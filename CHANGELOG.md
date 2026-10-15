@@ -2,6 +2,41 @@
 
 Newest-first order.
 
+## Phase 5 — Approval workflow
+**2026-10-15 — Completed**
+
+- 10 new files: approvals package (state machine, TTL, service),
+  approval selftest, 3 test files (service, state, ttl), 1 shared
+  tests/conftest.py fixture, 1 security test file (approval_integrity
+  with 10 tests including two real-thread concurrency tests)
+- 4 modified files: storage/approvals.py (+update_state_with_lock,
+  +get_by_id_with_version, +commit flag), storage/audit.py (+commit
+  flag for same-transaction participation), scripts/doctor.py
+  (+4 modules -> 36), Makefile (+approve-selftest target)
+- Tests: 234 passing (was 191)
+- State machine: pending -> {approved, denied, modified_approved,
+  expired}; all four are terminal
+- Optimistic locking: WHERE version = ? AND state = 'pending' inside
+  BEGIN IMMEDIATE ... COMMIT
+- 5-thread concurrency test: exactly 1 winner, 4 ConcurrentModificationError,
+  stable over 5 re-runs
+- Audit event written in the same transaction as decision + state change
+  (C-23)
+- Expired requests cannot be approved (C-26)
+- Terminal states cannot be transitioned (C-24)
+- Atomicity proof: 3 decides on different states -> exactly 1 decision row,
+  exactly 2 audit events (requested + decided)
+
+Security controls verified: C-21, C-22, C-23, C-24, C-25, C-26, C-27
+
+Note: storage/audit.py was modified outside the explicit MODIFY list to
+add a `commit: bool = True` keyword to AuditRepository.append. Required
+for audit events to participate in the same transaction as the state
+change (C-23). Backward compatible — all Phase 1-4 callers still pass
+with default auto-commit.
+
+ADRs applied: ADR-007, ADR-015
+
 ## Phase 4 — Evidence recorder + verifier
 **2026-10-15 — Completed**
 

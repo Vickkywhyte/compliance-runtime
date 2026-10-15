@@ -45,6 +45,10 @@ MODULES = [
     "compliance_runtime.evidence.signing",
     "compliance_runtime.evidence.recorder",
     "compliance_runtime.evidence.verifier",
+    "compliance_runtime.approvals",
+    "compliance_runtime.approvals.service",
+    "compliance_runtime.approvals.state",
+    "compliance_runtime.approvals.ttl",
 ]
 
 

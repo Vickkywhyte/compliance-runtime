@@ -7,7 +7,7 @@ PYTHON ?= python
 .PHONY: help sync doctor test selftest lock \
         clean clean-cache clean-data \
         migrate 02-migrate-selftest policy-validate 03-policy-selftest \
-        04-evidence-selftest eval demo serve dossier verify
+        04-evidence-selftest approve-selftest eval demo serve dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -76,3 +76,6 @@ verify: ## Verify the evidence chain (Phase 4)
 
 04-evidence-selftest: ## Phase 4 evidence recorder + verifier self-test
 	$(PYTHON) scripts/04_evidence_selftest.py
+
+approve-selftest: ## Phase 5 approval workflow self-test
+	$(PYTHON) scripts/05_approval_selftest.py

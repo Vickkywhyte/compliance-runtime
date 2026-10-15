@@ -396,7 +396,7 @@ make eval && pytest tests/test_metrics.py tests/test_stats.py tests/test_benchma
 
 ---
 
-## Phase 8 — Dashboard ⚪
+## Phase 8 — Dashboard 🟢
 
 **Goal:** Streamlit dashboard with 4 views.
 

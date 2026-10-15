@@ -103,7 +103,8 @@ All with bootstrap confidence intervals. All measured against a
 | Phase 5 — Approval workflow | 🟢 Complete | Phase 6 next |
 | Phase 6 — Interception layer (HTTP + SDK) | 🟢 Complete | Phase 7 next |
 | Phase 7 — Evaluation harness | 🟢 Complete | Phase 8 next |
-| Phases 8–11 | ⚪ Not started | See `08_ROADMAP.md` |
+| Phase 8 — Dashboard | 🟢 Complete | Phase 9 next |
+| Phases 9–11 | ⚪ Not started | See `08_ROADMAP.md` |
 
 **Legend:** 🟢 done · 🟡 in progress · ⚪ not started · 🔴 blocked
 

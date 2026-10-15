@@ -101,7 +101,8 @@ All with bootstrap confidence intervals. All measured against a
 | Phase 3 — Policy engine | 🟢 Complete | Phase 4 next |
 | Phase 4 — Evidence recorder + verifier | 🟢 Complete | Phase 5 next |
 | Phase 5 — Approval workflow | 🟢 Complete | Phase 6 next |
-| Phases 6–11 | ⚪ Not started | See `08_ROADMAP.md` |
+| Phase 6 — Interception layer (HTTP + SDK) | 🟢 Complete | Phase 7 next |
+| Phases 7–11 | ⚪ Not started | See `08_ROADMAP.md` |
 
 **Legend:** 🟢 done · 🟡 in progress · ⚪ not started · 🔴 blocked
 

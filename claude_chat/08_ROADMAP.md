@@ -311,7 +311,7 @@ python scripts/05_approval_selftest.py && pytest tests/security/test_approval_in
 
 ---
 
-## Phase 6 — Interception layer (HTTP + SDK) ⚪
+## Phase 6 — Interception layer (HTTP + SDK) 🟢
 
 **Goal:** Expose the runtime over HTTP and as a Python SDK.
 

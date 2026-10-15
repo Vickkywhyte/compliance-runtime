@@ -121,7 +121,7 @@ make sync && make doctor && make test && make selftest
 
 ---
 
-## Phase 2 — Storage + evidence foundations ⚪
+## Phase 2 — Storage + evidence foundations 🟢
 
 **Goal:** SQLite schema, repositories for tool calls and evaluations.
 Evidence tables defined. No signing yet.

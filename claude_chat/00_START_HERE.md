@@ -105,7 +105,8 @@ All with bootstrap confidence intervals. All measured against a
 | Phase 7 — Evaluation harness | 🟢 Complete | Phase 8 next |
 | Phase 8 — Dashboard | 🟢 Complete | Phase 9 next |
 | Phase 9 — Dossier generator + mock agent + demo | 🟢 Complete | Phase 10 next |
-| Phases 10–11 | ⚪ Not started | See `08_ROADMAP.md` |
+| Phase 10 — Security hardening + Docker + CI | 🟢 Complete | Phase 11 next |
+| Phase 11 | ⚪ Not started | See `08_ROADMAP.md` |
 
 **Legend:** 🟢 done · 🟡 in progress · ⚪ not started · 🔴 blocked
 

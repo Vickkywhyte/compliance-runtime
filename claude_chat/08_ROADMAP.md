@@ -488,7 +488,7 @@ make demo && pytest tests/test_dossier.py tests/test_demo_integration.py tests/s
 
 ---
 
-## Phase 10 — Security hardening + Docker + CI ⚪
+## Phase 10 — Security hardening + Docker + CI 🟢
 
 **Goal:** Finalize Docker, wire CI, verify all controls.
 

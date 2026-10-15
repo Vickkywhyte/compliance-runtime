@@ -32,6 +32,14 @@ MODULES = [
     "compliance_runtime.storage.evaluations",
     "compliance_runtime.storage.action_records",
     "compliance_runtime.storage.approvals",
+    "compliance_runtime.policy",
+    "compliance_runtime.policy.models",
+    "compliance_runtime.policy.loader",
+    "compliance_runtime.policy.validators",
+    "compliance_runtime.policy.engine",
+    "compliance_runtime.policy.field_resolver",
+    "compliance_runtime.policy.rate_limit",
+    "compliance_runtime.policy.injection",
 ]
 
 

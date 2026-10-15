@@ -2,6 +2,41 @@
 
 Newest-first order.
 
+## Phase 3 — Policy engine
+**2026-10-15 — Completed**
+
+- 18 new files: policy package (models, loader, validators, engine,
+  field_resolver, rate_limit, injection), demo_policy.yaml,
+  policy selftest, 5 test files (loader, validator, engine, field
+  resolver, rate limit), 3 security test files (policy_bypass with 15
+  scenarios, injection with 15 scenarios, policy_integrity)
+- 2 modified files: scripts/doctor.py (+8 modules -> 27), Makefile
+  (real policy-validate target + 03-policy-selftest)
+- 1 spec clarification: 05_DATA_SPEC.md §3.7 documents that
+  PolicySet.content_hash is a SEMANTIC hash (parsed representation,
+  not raw file bytes)
+- Tests: 152 passing (was 65). 58 in tests/security/.
+- Priority-ordered evaluation, first match wins
+- Four dispositions: allow, deny, require_approval, allow_with_flag
+- 15 policy bypass scenarios pass (C-05)
+- 15 injection scenarios pass (C-08, C-09)
+- Rate limiter: 100/min per agent+action, drops metric (C-32, C-36)
+- PolicySet.version embeds content_hash[:8] (C-29)
+- Security controls verified: C-01..C-05, C-08, C-09, C-28, C-29,
+  C-31, C-32, C-33, C-36
+
+Two defects found and fixed during verification:
+1. C-31 (refuse to start on policy error) was only half-enforced:
+   semantic validation (empty when, duplicate priorities, invalid field
+   patterns) was not called on the load path. Fixed: load_policy_set
+   and PolicyEngine.__init__ both call validate_policy. 5 regression
+   tests added.
+2. Verified that content_hash semantics (parsed vs. byte-level) were
+   a deliberate design decision; documented explicitly in
+   05_DATA_SPEC.md §3.7.
+
+ADRs applied: ADR-005, ADR-006, ADR-013, ADR-014
+
 ## Phase 2 — Storage + evidence foundations
 **2026-10-15 — Completed**
 

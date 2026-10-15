@@ -1,0 +1,46 @@
+# Demo policy — verbatim from claude_chat/05_DATA_SPEC.md §4.2.
+# Rules are evaluated in ascending priority; the first all-true rule wins.
+name: demo_policy
+version: "1.0.0"
+rules:
+  - id: refund_limit
+    priority: 10
+    description: "Refunds over €500 require compliance officer approval"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "issue_refund"
+      - field: "parameters.amount"
+        operator: "greater_than"
+        value: 500
+    enforce:
+      disposition: "require_approval"
+      reason: "Refunds over €500 require compliance sign-off"
+      require_role: "compliance_officer"
+      severity: "high"
+      ttl_seconds: 900
+
+  - id: fraud_flagged_account
+    priority: 5
+    description: "Deny actions on fraud-flagged accounts"
+    when:
+      - field: "entity.fraud_flags"
+        operator: "not_in"
+        value: []
+    enforce:
+      disposition: "deny"
+      reason: "Account is flagged for fraud investigation"
+
+  - id: default_allow_refunds
+    priority: 100
+    description: "Allow refunds under €500 by default"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "issue_refund"
+      - field: "parameters.amount"
+        operator: "less_or_equal"
+        value: 500
+    enforce:
+      disposition: "allow"
+      reason: "Refund within authorized limit"

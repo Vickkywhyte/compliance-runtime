@@ -6,7 +6,8 @@ PYTHON ?= python
 
 .PHONY: help sync doctor test selftest lock \
         clean clean-cache clean-data \
-        migrate 02-migrate-selftest policy-validate eval demo serve dossier verify
+        migrate 02-migrate-selftest policy-validate 03-policy-selftest \
+        eval demo serve dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -52,8 +53,11 @@ migrate: ## Apply storage migrations (Phase 2)
 02-migrate-selftest: ## Phase 2 migration + round-trip self-test
 	$(PYTHON) scripts/02_migrate_selftest.py
 
-policy-validate: ## (stub) validate policy files — Phase 3
-	@echo "policy-validate: not implemented yet (Phase 3)" >&2; exit 1
+policy-validate: ## Validate every policy file (Phase 3)
+	$(PYTHON) -c "from pathlib import Path; from compliance_runtime.policy.loader import load_policy_set; from compliance_runtime.policy.validators import validate_policy; ps = load_policy_set(Path('configs/policies')); [validate_policy(p) for p in ps.policies]; print(f'policy-validate OK: {len(ps.policies)} policies, {sum(len(p.rules) for p in ps.policies)} rules')"
+
+03-policy-selftest: ## Phase 3 policy engine self-test
+	$(PYTHON) scripts/03_policy_selftest.py
 
 eval: ## (stub) run the evaluation harness — Phase 7
 	@echo "eval: not implemented yet (Phase 7)" >&2; exit 1

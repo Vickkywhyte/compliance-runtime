@@ -224,6 +224,17 @@ class Policy(BaseModel):
     rules: list[PolicyRule]
 ```
 
+> **Note — `PolicySet.content_hash` is a SEMANTIC hash.**
+> `PolicySet.content_hash` is computed from the canonical parsed
+> representation of all policies (`model_dump()` + `canonical_json` +
+> `sha256`), NOT from raw file bytes. Consequences:
+> - Comment-only edits, whitespace changes, and YAML key reordering do
+>   NOT change the `content_hash`.
+> - Any change that affects enforcement behavior (values, operators,
+>   priorities, dispositions, rule ids) DOES change the `content_hash`.
+> - This is deliberate: `content_hash` identifies policy ENFORCEMENT
+>   semantics, not file formatting. See C-29.
+
 ## 4. Configuration schemas
 
 ### 4.1 `configs/runtime.yaml`

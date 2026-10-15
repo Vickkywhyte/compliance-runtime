@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from datetime import datetime
 
 from compliance_runtime.exceptions import StorageError
 from compliance_runtime.storage.models import ApprovalDecision, ApprovalRequest
@@ -132,6 +133,23 @@ class ApprovalRequestRepository:
                 "SELECT COUNT(*) FROM approval_requests WHERE state = ?", (state,)
             ).fetchone()[0]
         )
+
+    def list_in_range(
+        self, since: datetime | None, until: datetime | None
+    ) -> list[ApprovalRequest]:
+        """Return requests whose ``created_at`` falls in ``[since, until]``.
+
+        A ``None`` bound is open on that side. Ordered by insertion (rowid).
+        """
+        rows = self._conn.execute(
+            "SELECT * FROM approval_requests ORDER BY rowid ASC"
+        ).fetchall()
+        requests = [self._row_to_model(row) for row in rows]
+        return [
+            r for r in requests
+            if (since is None or r.created_at >= since)
+            and (until is None or r.created_at <= until)
+        ]
 
     @staticmethod
     def _row_to_model(row: sqlite3.Row) -> ApprovalRequest:

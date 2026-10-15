@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI Compliance Dossier</title>
+</head>
+<body>
+  <h1>AI Compliance Dossier</h1>
+  <p>Generated at: {generated_at}</p>
+
+  <h2>Policy</h2>
+  <p>Name: {policy_name} &middot; Version: {policy_version}</p>
+  <p>Content hash: {policy_content_hash}</p>
+
+  <h2>Actions</h2>
+  <p>Total actions: {total_actions}</p>
+  {disposition_breakdown_table}
+
+  <h2>Human oversight</h2>
+  {approval_summary_table}
+
+  <h2>Evidence verification</h2>
+  <p>Chain integrity: {chain_integrity}</p>
+  <p>Signature validity: {signature_validity}</p>
+  <p>Records verified: {n_records_verified}</p>
+  <p>Verification key fingerprint (public key, not key material):
+     {verification_key_fingerprint}</p>
+
+  <h2>EU AI Act Article 12 obligations</h2>
+  {obligations_table}
+  {obligation_status_table}
+</body>
+</html>

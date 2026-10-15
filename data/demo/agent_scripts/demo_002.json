@@ -1,0 +1,10 @@
+{
+  "name": "demo_002_require_approval",
+  "description": "One allowed, one paused for approval (amount over limit)",
+  "steps": [
+    {"action": "issue_refund",
+     "parameters": {"amount": 250, "currency": "EUR"}},
+    {"action": "issue_refund",
+     "parameters": {"amount": 850, "currency": "EUR"}}
+  ]
+}

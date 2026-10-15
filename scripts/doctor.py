@@ -85,6 +85,12 @@ MODULES = [
     "compliance_runtime.dashboard.components.approval_form",
     "compliance_runtime.dashboard.components.chain_viewer",
     "compliance_runtime.dashboard.components.policy_info",
+    "compliance_runtime.dossier",
+    "compliance_runtime.dossier.generator",
+    "compliance_runtime.dossier.ai_act_mapping",
+    "compliance_runtime.mock_agent",
+    "compliance_runtime.mock_agent.agent",
+    "compliance_runtime.mock_agent.runner",
 ]
 
 

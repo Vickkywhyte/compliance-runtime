@@ -1,0 +1,11 @@
+{
+  "name": "demo_003_deny_fraud",
+  "description": "One allowed, then a fraud-flagged account refund is denied",
+  "steps": [
+    {"action": "issue_refund",
+     "parameters": {"amount": 250, "currency": "EUR"}},
+    {"action": "issue_refund",
+     "parameters": {"amount": 250, "currency": "EUR"},
+     "entity_context": {"fraud_flags": ["credit_card_chargeback_risk"]}}
+  ]
+}

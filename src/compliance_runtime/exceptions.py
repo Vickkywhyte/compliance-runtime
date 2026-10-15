@@ -100,6 +100,13 @@ class BenchmarkValidationError(EvalError):
     """Raised when a benchmark dataset fails its quality gate."""
 
 
+# --- Demo / dossier ------------------------------------------------------
+
+
+class DemoError(ComplianceRuntimeError):
+    """Raised when the demo cannot run or its assertions fail."""
+
+
 # --- Catch-all internal --------------------------------------------------
 
 
@@ -124,6 +131,7 @@ _ALL_EXCEPTIONS = (
     MigrationError,
     EvalError,
     BenchmarkValidationError,
+    DemoError,
     RuntimeInternalError,
 )
 

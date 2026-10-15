@@ -8,8 +8,8 @@ PYTHON ?= python
         clean clean-cache clean-data \
         migrate 02-migrate-selftest policy-validate 03-policy-selftest \
         04-evidence-selftest approve-selftest 06-runtime-selftest \
-        07-eval-selftest eval-mini eval demo serve serve-dashboard \
-        dashboard-selftest dossier verify
+        07-eval-selftest eval-mini eval demo demo-noserve dossier-selftest \
+        serve serve-dashboard dashboard-selftest dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -70,8 +70,14 @@ eval-mini: ## Run the evaluation harness on the 20-entry mini benchmark
 07-eval-selftest: ## Phase 7 evaluation self-test
 	$(PYTHON) scripts/07_eval_selftest.py
 
-demo: ## (stub) run the end-to-end demo — Phase 9
-	@echo "demo: not implemented yet (Phase 9)" >&2; exit 1
+demo: ## Run the end-to-end demo (Phase 9)
+	$(PYTHON) scripts/09_demo.py --reset
+
+demo-noserve: ## Run the demo without the dashboard hint
+	$(PYTHON) scripts/09_demo.py --reset --no-serve
+
+dossier-selftest: ## Phase 9 dossier self-test
+	$(PYTHON) scripts/09_dossier_selftest.py
 
 serve: ## Start the FastAPI runtime server (Phase 6)
 	$(PYTHON) -m uvicorn compliance_runtime.interception.server:app --host 0.0.0.0 --port 8000

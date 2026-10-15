@@ -1,0 +1,10 @@
+{
+  "name": "demo_001_happy_path",
+  "description": "Two allowed refunds under limit (no fraud context => fraud rule skipped)",
+  "steps": [
+    {"action": "issue_refund",
+     "parameters": {"amount": 250, "currency": "EUR"}},
+    {"action": "issue_refund",
+     "parameters": {"amount": 100, "currency": "EUR"}}
+  ]
+}

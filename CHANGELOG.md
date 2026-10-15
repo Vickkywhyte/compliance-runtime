@@ -2,6 +2,51 @@
 
 Newest-first order.
 
+## Phase 9 — Dossier generator + mock agent + demo
+**2026-10-15 — Completed**
+
+- 16 new files: dossier package (generator with reportlab PDF, EU AI
+  Act Article 12 obligation mapping, HTML template), mock agent
+  package (agent + runner), 3 demo scripts, demo CLI, dossier
+  selftest, 4 test files
+- 3 modified files: exceptions.py (+DemoError), doctor.py (+6 modules
+  -> 78), Makefile (real demo + demo-noserve + dossier-selftest)
+- Tests: 360 passing (was 329)
+
+Functionality:
+- DossierGenerator reads ActionRecords + ApprovalRequests +
+  ApprovalDecisions and produces a regulator-ready PDF mapping
+  evidence to EU AI Act Article 12 (art12.1, art12.2, art12.3) and
+  Article 14 (human oversight) obligations
+- MockAgent reads scripted tool-call JSON and executes each via
+  ToolExecutor — no LLM
+- make demo-noserve runs 3 scripts / 6 steps end-to-end in under 1
+  second, producing 4 allow / 1 deny / 1 require_approval, and a
+  dossier PDF
+
+Security (C-37, C-38, C-39, C-40):
+- Dossier field whitelist enforced (C-38); raw parameters never
+  included (C-37); private key never in PDF (C-39); verification key
+  fingerprint present but never the key material (C-40)
+- PDF uncompressed (pageCompression=0) so export-safety audits can
+  grep raw bytes
+- Dossier field whitelist test + 6 export-safety tests pass
+
+Verified:
+- Demo completes in ~0.42s (< 60s target)
+- Mock agent deterministic across runs
+- Disposition mix exactly 4 allow / 1 deny / 1 require_approval
+- Zero LLM/HTTP imports in demo path (ADR-013)
+- All 4 EU AI Act obligations marked "satisfied"
+
+Three fixes applied during verification:
+1. Dossier per-action rows now include matched_rule_id (joined from
+   policy_evaluations).
+2. approval_summary respects the since/until range (was all-time).
+3. Repository-level list_in_range added to support (2).
+
+ADRs applied: ADR-004, ADR-006, ADR-013
+
 ## Phase 8 — Dashboard (Streamlit)
 **2026-10-15 — Completed**
 

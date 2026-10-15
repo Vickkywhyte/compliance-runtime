@@ -7,7 +7,7 @@ PYTHON ?= python
 .PHONY: help sync doctor test selftest lock \
         clean clean-cache clean-data \
         migrate 02-migrate-selftest policy-validate 03-policy-selftest \
-        eval demo serve dossier verify
+        04-evidence-selftest eval demo serve dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -71,5 +71,8 @@ serve: ## (stub) start the runtime + dashboard — Phase 6/8
 dossier: ## (stub) generate a compliance dossier — Phase 9
 	@echo "dossier: not implemented yet (Phase 9)" >&2; exit 1
 
-verify: ## (stub) verify the evidence chain — Phase 4
-	@echo "verify: not implemented yet (Phase 4)" >&2; exit 1
+verify: ## Verify the evidence chain (Phase 4)
+	$(PYTHON) -c "from compliance_runtime.storage.db import get_connection; from compliance_runtime.storage.migrate import apply_migrations; from compliance_runtime.storage.action_records import ActionRecordRepository; from compliance_runtime.evidence.verifier import EvidenceVerifier; conn = get_connection(); apply_migrations(conn); repo = ActionRecordRepository(conn); r = EvidenceVerifier(repo).verify_all(); print(f'chain_integrity={r.chain_integrity} signature_validity={r.signature_validity} n_records={r.n_records}')"
+
+04-evidence-selftest: ## Phase 4 evidence recorder + verifier self-test
+	$(PYTHON) scripts/04_evidence_selftest.py

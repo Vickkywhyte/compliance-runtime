@@ -91,6 +91,32 @@ class ActionRecordRepository:
         ).fetchall()
         return [self._row_to_model(row) for row in rows]
 
+    def list_all(self) -> list[ActionRecord]:
+        """Return every record in insertion (chain) order.
+
+        Ordered by ``rowid``, which is the true append order — the chain is
+        built by linking each record to ``latest()``. ULIDs are not strictly
+        monotonic within a millisecond, so ``action_id`` ordering must not be
+        used for chain verification.
+        """
+        rows = self._conn.execute(
+            "SELECT * FROM action_records ORDER BY rowid ASC"
+        ).fetchall()
+        return [self._row_to_model(row) for row in rows]
+
+    def list_range(self, start_id: str, end_id: str) -> list[ActionRecord]:
+        """Return records with ``start_id <= action_id <= end_id``, chain order.
+
+        Selection is by ``action_id`` bounds; ordering is by ``rowid`` so the
+        returned slice is in chain order.
+        """
+        rows = self._conn.execute(
+            "SELECT * FROM action_records WHERE action_id >= ? AND action_id <= ? "
+            "ORDER BY rowid ASC",
+            (start_id, end_id),
+        ).fetchall()
+        return [self._row_to_model(row) for row in rows]
+
     def latest(self) -> ActionRecord | None:
         """Return the most recently inserted record (for chain building)."""
         row = self._conn.execute(

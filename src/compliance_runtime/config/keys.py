@@ -31,9 +31,31 @@ _PRIVATE_MODE = 0o600
 _PUBLIC_MODE = 0o644
 _DIR_MODE = 0o700
 
+# Module-level override for the keys directory. ``None`` means use the
+# default. Tests (and hermetic self-tests) call :func:`set_keys_dir` to point
+# at a tempdir so they never touch the real signing key. An explicit
+# ``keys_dir`` argument to a function still takes precedence over this.
+_KEYS_DIR_OVERRIDE: str | None = None
+
+
+def set_keys_dir(path: str | os.PathLike[str] | None) -> None:
+    """Override the default keys directory process-wide (``None`` resets)."""
+    global _KEYS_DIR_OVERRIDE
+    _KEYS_DIR_OVERRIDE = str(path) if path is not None else None
+
+
+def get_keys_dir() -> Path:
+    """Return the effective keys directory (override, else default)."""
+    return _resolve_dir(None)
+
 
 def _resolve_dir(keys_dir: str | os.PathLike[str] | None) -> Path:
-    raw = str(keys_dir) if keys_dir is not None else _DEFAULT_KEYS_DIR
+    if keys_dir is not None:
+        raw = str(keys_dir)
+    elif _KEYS_DIR_OVERRIDE is not None:
+        raw = _KEYS_DIR_OVERRIDE
+    else:
+        raw = _DEFAULT_KEYS_DIR
     return Path(raw).expanduser()
 
 

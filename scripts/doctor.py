@@ -40,6 +40,11 @@ MODULES = [
     "compliance_runtime.policy.field_resolver",
     "compliance_runtime.policy.rate_limit",
     "compliance_runtime.policy.injection",
+    "compliance_runtime.evidence",
+    "compliance_runtime.evidence.hashing",
+    "compliance_runtime.evidence.signing",
+    "compliance_runtime.evidence.recorder",
+    "compliance_runtime.evidence.verifier",
 ]
 
 

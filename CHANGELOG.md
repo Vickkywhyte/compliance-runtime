@@ -2,6 +2,35 @@
 
 Newest-first order.
 
+## Phase 4 — Evidence recorder + verifier
+**2026-10-15 — Completed**
+
+- 11 new files: evidence package (hashing, signing, recorder,
+  verifier), evidence selftest, 4 test files, known-answer hash
+  vectors fixture
+- 5 modified files: config/keys.py (+set_keys_dir/get_keys_dir
+  override), storage/action_records.py (+list_all/list_range
+  read-only), tests/security/test_key_safety.py (+3 signing-safety
+  tests), scripts/doctor.py (+5 modules -> 32), Makefile (real verify
+  target + 04-evidence-selftest)
+- Tests: 191 passing (was 152)
+- SHA-256 hash chain + Ed25519 signatures on every ActionRecord
+- parameters_hash = sha256(canonical_json(parameters)) — raw values
+  never stored (C-37)
+- Verifier works offline; verify_records exposed for synthetic testing
+- Chain order = rowid (insertion order), NOT action_id — ulid-py is
+  not monotonic within a millisecond
+- signing_key_id included in hashed payload (recorder + verifier
+  hash identical field dict)
+- Raw ed25519 private-key primitive confined to config/keys.py only
+  (C-18, tighter than spec)
+- Security controls verified: C-10..C-14, C-15..C-20, C-35, C-37
+
+Known-answer vectors (5) confirm canonicalization stability across:
+sorted keys, nested structures, unicode, float precision, datetime.
+
+ADRs applied: ADR-004, ADR-017
+
 ## Phase 3 — Policy engine
 **2026-10-15 — Completed**
 

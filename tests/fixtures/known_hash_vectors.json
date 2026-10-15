@@ -1,0 +1,40 @@
+{
+  "_comment": "Known-answer vectors for evidence/hashing.py. expected_hash values were computed once by the real implementation and hardcoded; a change in canonicalization will break these tests. See 05_DATA_SPEC.md §8.",
+  "vectors": [
+    {
+      "name": "simple",
+      "fields": {"a": 1, "b": "two"},
+      "previous_hash": "GENESIS",
+      "expected_canonical": "{\"a\":1,\"b\":\"two\"}",
+      "expected_hash": "1924bdcfc2e9411f2cf544f1427aaf1e9e1202f105010c4553785db25f9ca8a0"
+    },
+    {
+      "name": "nested",
+      "fields": {"x": {"y": [1, 2, 3]}},
+      "previous_hash": "GENESIS",
+      "expected_canonical": "{\"x\":{\"y\":[1,2,3]}}",
+      "expected_hash": "47b3a25d18fdce570b10b3a3ada9055903d4f743e3a535e0cf8b9bc8a5892c46"
+    },
+    {
+      "name": "datetime",
+      "fields": {"ts": "2026-10-15T14:00:00Z"},
+      "previous_hash": "GENESIS",
+      "expected_canonical": "{\"ts\":\"2026-10-15T14:00:00Z\"}",
+      "expected_hash": "f731d9b6093f8ce768facdf3440d230c5a68f4fe709db6aaffeb4b9c83295ef6"
+    },
+    {
+      "name": "unicode",
+      "fields": {"note": "café — naïve"},
+      "previous_hash": "GENESIS",
+      "expected_canonical": "{\"note\":\"café — naïve\"}",
+      "expected_hash": "5f7a2717102f08c185b7a6afbc4369baacf3f70da1e54a11623435ad1149bdaf"
+    },
+    {
+      "name": "float_precision",
+      "fields": {"amount": 500.0000001},
+      "previous_hash": "GENESIS",
+      "expected_canonical": "{\"amount\":500.0000001}",
+      "expected_hash": "f03c2f3c71a67939b65b0adcde9e075184cb50cad2753dcf905a40b27b67007b"
+    }
+  ]
+}

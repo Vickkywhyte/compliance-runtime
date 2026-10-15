@@ -1,0 +1,23 @@
+# Evaluation configuration for the AI Compliance Runtime.
+# Schema: src/compliance_runtime/config/models.py (EvalConfig).
+# Spec: claude_chat/05_DATA_SPEC.md §4.3
+# Loaded ONLY through src/compliance_runtime/config/loader.py (Lesson 8).
+
+benchmark_path: "data/eval/benchmark.jsonl"
+metrics:
+  enforcement:
+    - policy_precision
+    - policy_recall
+    - false_positive_rate
+    - false_negative_rate
+    - policy_coverage
+  evidence:
+    - audit_completeness
+    - chain_integrity
+    - signature_validity
+  oversight:
+    - approval_latency_p50_ms
+    - approval_latency_p95_ms
+    - bypass_attempts_blocked_rate
+bootstrap_samples: 1000
+seed: 0

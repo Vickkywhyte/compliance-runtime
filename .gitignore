@@ -19,6 +19,9 @@ venv/
 *.pth
 
 # Data (large; not version-controlled)
+# Lesson 12: the pattern *.db* is included, not just *.db
+*.db
+*.db*
 data/runtime.db
 data/runtime.db-shm
 data/runtime.db-wal
@@ -44,6 +47,7 @@ results/dossiers/
 results/figures/
 
 # Logs
+logs/
 logs/app.jsonl*
 logs/cost.jsonl
 

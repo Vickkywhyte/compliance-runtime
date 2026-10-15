@@ -1,0 +1,24 @@
+# Runtime configuration for the AI Compliance Runtime.
+# Schema: src/compliance_runtime/config/models.py (AppConfig).
+# Spec: claude_chat/05_DATA_SPEC.md §4.1
+# Loaded ONLY through src/compliance_runtime/config/loader.py (Lesson 8).
+
+runtime:
+  version: "0.1.0"
+  default_disposition: "allow_with_flag"   # used when no rule matches
+  evidence_store_path: "data/runtime.db"
+  keys_dir: "~/.compliance-runtime/keys"
+  log_level: "INFO"
+
+http:
+  host: "0.0.0.0"
+  port: 8000
+  request_timeout_seconds: 30
+
+approvals:
+  default_ttl_seconds: 900
+  max_pending_per_role: 500
+
+evidence:
+  hash_algorithm: "sha256"
+  signature_algorithm: "ed25519"

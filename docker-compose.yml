@@ -1,0 +1,18 @@
+# docker-compose.yml — AI Compliance Runtime (STUB).
+# Finalized in Phase 10. Phase 1 ships this as a placeholder only.
+
+services:
+  runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: compliance-runtime:dev
+    # The HTTP server (Phase 6) and dashboard (Phase 8) wire up here later.
+    # ports:
+    #   - "8000:8000"   # runtime HTTP API
+    #   - "8501:8501"   # Streamlit dashboard
+    volumes:
+      - ./data:/app/data
+      - ./configs:/app/configs
+    environment:
+      - CR_RUNTIME_CONFIG=configs/runtime.yaml

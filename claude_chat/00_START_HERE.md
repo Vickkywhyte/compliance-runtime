@@ -96,7 +96,7 @@ All with bootstrap confidence intervals. All measured against a
 | Phase | Status | Notes |
 |---|---|---|
 | Planning (`claude_chat/`) | 🟢 Complete | 13 docs locked |
-| Phase 1 — Scaffolding + safety rails | ⚪ Not started | Next action |
+| Phase 1 — Scaffolding + safety rails | 🟢 Complete | Phase 2 next |
 | Phases 2–11 | ⚪ Not started | See `08_ROADMAP.md` |
 
 **Legend:** 🟢 done · 🟡 in progress · ⚪ not started · 🔴 blocked

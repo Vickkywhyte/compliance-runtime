@@ -37,7 +37,7 @@ realistic, not padding.
 
 ---
 
-## Phase 1 — Scaffolding + safety rails ⚪
+## Phase 1 — Scaffolding + safety rails 🟢
 
 **Goal:** Cloneable repo with prevention mechanisms from Lessons 1, 1b,
 5, 7, 8, 9, 11, 12 in place. No application logic yet.

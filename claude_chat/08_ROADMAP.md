@@ -217,7 +217,7 @@ make policy-validate && pytest tests/test_policy_engine.py tests/security/ -v
 
 ---
 
-## Phase 4 — Evidence recorder + verifier ⚪
+## Phase 4 — Evidence recorder + verifier 🟢
 
 **Goal:** Sign and hash-chain every action record; verify chain and
 signatures.

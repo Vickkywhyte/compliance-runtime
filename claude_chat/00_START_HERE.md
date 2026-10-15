@@ -99,7 +99,8 @@ All with bootstrap confidence intervals. All measured against a
 | Phase 1 — Scaffolding + safety rails | 🟢 Complete | Phase 2 next |
 | Phase 2 — Storage + evidence foundations | 🟢 Complete | Phase 3 next |
 | Phase 3 — Policy engine | 🟢 Complete | Phase 4 next |
-| Phases 4–11 | ⚪ Not started | See `08_ROADMAP.md` |
+| Phase 4 — Evidence recorder + verifier | 🟢 Complete | Phase 5 next |
+| Phases 5–11 | ⚪ Not started | See `08_ROADMAP.md` |
 
 **Legend:** 🟢 done · 🟡 in progress · ⚪ not started · 🔴 blocked
 

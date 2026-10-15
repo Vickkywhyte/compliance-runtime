@@ -162,7 +162,7 @@ make migrate && python scripts/02_migrate_selftest.py && pytest tests/test_stora
 
 ---
 
-## Phase 3 — Policy engine ⚪
+## Phase 3 — Policy engine 🟢
 
 **Goal:** Load YAML policies, validate, evaluate tool calls against
 rules in priority order.

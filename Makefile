@@ -9,7 +9,8 @@ PYTHON ?= python
         migrate 02-migrate-selftest policy-validate 03-policy-selftest \
         04-evidence-selftest approve-selftest 06-runtime-selftest \
         07-eval-selftest eval-mini eval demo demo-noserve dossier-selftest \
-        serve serve-dashboard dashboard-selftest dossier verify
+        serve serve-dashboard dashboard-selftest verify \
+        docker-build docker-up docker-down compose-config
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -91,11 +92,22 @@ dashboard-selftest: ## Phase 8 dashboard render self-test (headless)
 06-runtime-selftest: ## Phase 6 runtime pipeline self-test
 	$(PYTHON) scripts/06_runtime_selftest.py
 
-dossier: ## (stub) generate a compliance dossier — Phase 9
-	@echo "dossier: not implemented yet (Phase 9)" >&2; exit 1
-
 verify: ## Verify the evidence chain (Phase 4)
 	$(PYTHON) -c "from compliance_runtime.storage.db import get_connection; from compliance_runtime.storage.migrate import apply_migrations; from compliance_runtime.storage.action_records import ActionRecordRepository; from compliance_runtime.evidence.verifier import EvidenceVerifier; conn = get_connection(); apply_migrations(conn); repo = ActionRecordRepository(conn); r = EvidenceVerifier(repo).verify_all(); print(f'chain_integrity={r.chain_integrity} signature_validity={r.signature_validity} n_records={r.n_records}')"
+
+# --- Docker (Phase 10) ---------------------------------------------------
+
+docker-build: ## Build the Docker image
+	docker build -t compliance-runtime:local .
+
+docker-up: ## Start the stack (detached)
+	docker compose up -d
+
+docker-down: ## Stop the stack
+	docker compose down
+
+compose-config: ## Validate the docker-compose file (no build)
+	docker compose config
 
 04-evidence-selftest: ## Phase 4 evidence recorder + verifier self-test
 	$(PYTHON) scripts/04_evidence_selftest.py

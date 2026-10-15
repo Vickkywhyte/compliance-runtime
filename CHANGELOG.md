@@ -2,6 +2,53 @@
 
 Newest-first order.
 
+## Phase 10 — Security hardening + Docker + CI
+**2026-10-15 — Completed**
+
+- 8 new/finalized files: Dockerfile (multi-stage, non-editable
+  install), docker-compose.yml (runtime service with TCP healthcheck),
+  .dockerignore (excludes .env, *.pem, *.db*), .gitattributes
+  (line-ending normalization), .github/workflows/ci.yml (3 jobs: test,
+  security-audit with pip-audit, docker-build smoke), .github/
+  pull_request_template.md (security checklist), docs/security.md
+  (public-facing threat model summary), tests/security/
+  test_dependency_pinning.py (7 tests, C-41 to C-44)
+- 1 modified file: Makefile (+docker-build, +docker-up, +docker-down,
+  +compose-config; removed dead `dossier` stub)
+- Tests: 367 passing (was 360)
+
+Docker:
+- Multi-stage build; builder installs deps from requirements.lock and
+  the project non-editable; runtime copies site-packages + app code
+- No torch, no unstructured, no chromadb, no libmagic1 — the runtime
+  is pure Python (verified by import grep)
+- Image size target: < 500 MB (down from the previous projects' < 3 GB
+  because the runtime has no ML dependencies)
+- Non-root user (uid 1000)
+- .dockerignore excludes .env, *.pem, *.db* sidecars
+
+CI:
+- 3 jobs: test (pytest), security-audit (pip-audit --strict), 
+  docker-build (build image + smoke test /)
+- Test job installs from lockfile, then dev deps (C-32 / C-44)
+
+Security:
+- C-41 (pinned deps via pip-compile), C-42 (maintained packages),
+  C-43 (pip-audit in CI), C-44 (lockfile-only CI install)
+- 7 dependency-pinning tests: lock exists, pins exact versions, no
+  local paths, all runtime deps declared, no drift, CI exists, CI
+  has docker build
+
+Significant deviation from the Phase 10 prompt flagged and resolved:
+The prompt referenced torch / libmagic1 / HuggingFace cache from a
+prior project's Dockerfile. Verified: this project's runtime imports
+zero ML libraries (cryptography, pydantic, fastapi, streamlit,
+structlog, reportlab, numpy, pyyaml, ulid, python-dotenv only). The
+Dockerfile is built for the actual pure-Python dependency set —
+smaller image, no wasted layers.
+
+ADRs applied: ADR-013 (no LLM in critical path)
+
 ## Phase 9 — Dossier generator + mock agent + demo
 **2026-10-15 — Completed**
 

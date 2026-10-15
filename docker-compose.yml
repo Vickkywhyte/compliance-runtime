@@ -1,18 +1,28 @@
-# docker-compose.yml — AI Compliance Runtime (STUB).
-# Finalized in Phase 10. Phase 1 ships this as a placeholder only.
+# docker-compose.yml — AI Compliance Runtime (Phase 10, finalized).
+#
+# One service exposing the Streamlit dashboard (8501) and FastAPI (8000).
+# Runtime state is mounted from the host so evidence persists across restarts.
+# No HuggingFace/model cache volume: the runtime has no ML dependencies
+# (ADR-013). ``.env`` is optional so `docker compose config` works without it.
 
 services:
   runtime:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: compliance-runtime:dev
-    # The HTTP server (Phase 6) and dashboard (Phase 8) wire up here later.
-    # ports:
-    #   - "8000:8000"   # runtime HTTP API
-    #   - "8501:8501"   # Streamlit dashboard
+    build: .
+    image: compliance-runtime:local
+    ports:
+      - "8501:8501"   # Streamlit dashboard
+      - "8000:8000"   # FastAPI
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - ./data:/app/data
-      - ./configs:/app/configs
-    environment:
-      - CR_RUNTIME_CONFIG=configs/runtime.yaml
+      - ./logs:/app/logs
+      - ./results:/app/results
+    healthcheck:
+      # Dependency-free TCP check against the Streamlit port.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8501"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

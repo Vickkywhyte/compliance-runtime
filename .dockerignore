@@ -1,0 +1,34 @@
+# Build context exclusions for the Docker image.
+.git/
+.github/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.DS_Store
+
+# Secrets — NEVER into the image (C-16, C-39)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+**/signing_key.pem
+**/verification_key.pem
+
+# Runtime state — regenerable
+data/runtime.db
+data/runtime.db-shm
+data/runtime.db-wal
+data/runtime.db-journal
+data/cache/
+logs/
+results/
+*.egg-info/
+dist/
+build/

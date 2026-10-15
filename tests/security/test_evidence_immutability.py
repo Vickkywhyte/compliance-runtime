@@ -11,14 +11,15 @@ import sqlite3
 import pytest
 
 from compliance_runtime.storage.audit import AuditRepository
-from compliance_runtime.storage.db import get_connection, migrate
+from compliance_runtime.storage.db import get_connection
+from compliance_runtime.storage.migrate import apply_migrations
 from compliance_runtime.storage.models import AuditEvent
 from compliance_runtime.utils.ids import new_ulid, now_utc
 
 
 def _conn() -> sqlite3.Connection:
     conn = get_connection(":memory:")
-    migrate(conn)
+    apply_migrations(conn)
     return conn
 
 

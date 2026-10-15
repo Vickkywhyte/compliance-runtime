@@ -6,7 +6,7 @@ PYTHON ?= python
 
 .PHONY: help sync doctor test selftest lock \
         clean clean-cache clean-data \
-        migrate policy-validate eval demo serve dossier verify
+        migrate 02-migrate-selftest policy-validate eval demo serve dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -46,8 +46,11 @@ clean-data: ## Remove the local SQLite database and logs (DESTRUCTIVE)
 
 # --- Future-phase stubs (fail until implemented) -------------------------
 
-migrate: ## (stub) apply storage migrations — Phase 2
-	@echo "migrate: not implemented yet (Phase 2)" >&2; exit 1
+migrate: ## Apply storage migrations (Phase 2)
+	$(PYTHON) -m compliance_runtime.storage.migrate
+
+02-migrate-selftest: ## Phase 2 migration + round-trip self-test
+	$(PYTHON) scripts/02_migrate_selftest.py
 
 policy-validate: ## (stub) validate policy files — Phase 3
 	@echo "policy-validate: not implemented yet (Phase 3)" >&2; exit 1

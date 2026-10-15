@@ -26,6 +26,12 @@ MODULES = [
     "compliance_runtime.storage.db",
     "compliance_runtime.storage.models",
     "compliance_runtime.storage.audit",
+    "compliance_runtime.storage.migrations",
+    "compliance_runtime.storage.migrate",
+    "compliance_runtime.storage.tool_calls",
+    "compliance_runtime.storage.evaluations",
+    "compliance_runtime.storage.action_records",
+    "compliance_runtime.storage.approvals",
 ]
 
 

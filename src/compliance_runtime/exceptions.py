@@ -78,6 +78,17 @@ class SigningKeyError(ComplianceRuntimeError):
     """
 
 
+# --- Storage -------------------------------------------------------------
+
+
+class StorageError(ComplianceRuntimeError):
+    """Raised for persistence failures (insert conflicts, bad rows, etc.)."""
+
+
+class MigrationError(StorageError):
+    """Raised when a schema migration cannot be applied."""
+
+
 # --- Catch-all internal --------------------------------------------------
 
 
@@ -98,6 +109,8 @@ _ALL_EXCEPTIONS = (
     ConcurrentModificationError,
     ExpiredApprovalError,
     SigningKeyError,
+    StorageError,
+    MigrationError,
     RuntimeInternalError,
 )
 
@@ -112,6 +125,7 @@ def _self_test() -> None:
     assert issubclass(SignatureError, EvidenceError)
     assert issubclass(ConcurrentModificationError, ApprovalError)
     assert issubclass(ExpiredApprovalError, ApprovalError)
+    assert issubclass(MigrationError, StorageError)
     # SigningKeyError must NOT be the builtin KeyError.
     assert SigningKeyError is not KeyError
     assert not issubclass(SigningKeyError, KeyError)

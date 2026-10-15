@@ -36,6 +36,9 @@ class AuditRepository:
 
     def __init__(self, conn: sqlite3.Connection) -> None:
         self._conn = conn
+        # Ensure dict-style row access regardless of how the caller built
+        # the connection (not just via storage.db.get_connection).
+        self._conn.row_factory = sqlite3.Row
 
     def append(self, event: AuditEvent) -> None:
         """Insert one audit event. No update path exists by design."""
@@ -101,12 +104,13 @@ class AuditRepository:
 
 def _self_test() -> None:
     """Append an event, read it back, and confirm no mutation API exists."""
-    from compliance_runtime.storage.db import get_connection, migrate
+    from compliance_runtime.storage.db import get_connection
+    from compliance_runtime.storage.migrate import apply_migrations
     from compliance_runtime.utils.ids import new_ulid, now_utc
 
     conn = get_connection(":memory:")
     try:
-        migrate(conn)
+        apply_migrations(conn)
         repo = AuditRepository(conn)
         event = AuditEvent(
             event_id=new_ulid(),

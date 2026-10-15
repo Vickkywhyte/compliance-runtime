@@ -1,0 +1,75 @@
+{
+  "tool_call": {
+    "call_id": "01M4Z7G2C194GFWJWNRCAA164M",
+    "correlation_id": "01M4Z7G2C1VECY8WM2P7ST5JSH",
+    "agent_id": "support_agent_v3",
+    "session_id": "sess_abc",
+    "action": "issue_refund",
+    "parameters": {"amount": 750, "currency": "EUR", "customer": "cust_42"},
+    "received_at": "2026-10-15T07:30:16.577896+00:00",
+    "metadata": {"source": "demo"}
+  },
+  "policy_evaluation": {
+    "evaluation_id": "01M4Z7G2C1NB0XCXDNZ73VQPW2",
+    "call_id": "01M4Z7G2C194GFWJWNRCAA164M",
+    "matched_rule_id": "refund_limit",
+    "matched_rule_priority": 10,
+    "policy_version": "1.0.0",
+    "disposition": "require_approval",
+    "reason": "Refunds over €500 require compliance sign-off",
+    "evidence": {"action": "issue_refund", "parameters.amount": 750},
+    "evaluated_at": "2026-10-15T07:30:16.600000+00:00",
+    "evaluation_duration_ms": 3
+  },
+  "action_record": {
+    "action_id": "01M4Z7G2C15HBAAH84WQC16CM2",
+    "call_id": "01M4Z7G2C194GFWJWNRCAA164M",
+    "evaluation_id": "01M4Z7G2C1NB0XCXDNZ73VQPW2",
+    "disposition": "require_approval",
+    "agent_id": "support_agent_v3",
+    "session_id": "sess_abc",
+    "action": "issue_refund",
+    "parameters_hash": "2a97516c354b68848cdbd8f54a226a0a55b21ed138e207ad6c5cbb9c00aa5aea",
+    "timestamp": "2026-10-15T07:30:16.610000+00:00",
+    "previous_hash": "GENESIS",
+    "current_hash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+    "signature": "eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA==",
+    "signing_key_id": "local-ed25519-v1",
+    "runtime_version": "0.1.0"
+  },
+  "approval_request": {
+    "request_id": "01M4Z7G2C1517Q07VMEDBT3YA9",
+    "action_id": "01M4Z7G2C15HBAAH84WQC16CM2",
+    "call_id": "01M4Z7G2C194GFWJWNRCAA164M",
+    "reason": "Refunds over €500 require compliance sign-off",
+    "matched_rule_id": "refund_limit",
+    "severity": "high",
+    "assignee_role": "compliance_officer",
+    "ttl_seconds": 900,
+    "created_at": "2026-10-15T07:30:16.610000+00:00",
+    "expires_at": "2026-10-15T07:45:16.610000+00:00",
+    "state": "pending",
+    "version": 1
+  },
+  "approval_decision": {
+    "decision_id": "01M4Z7G2C14ADJ239FX3YHBA75",
+    "request_id": "01M4Z7G2C1517Q07VMEDBT3YA9",
+    "actor_id": "officer_1",
+    "actor_role": "compliance_officer",
+    "decision": "approve",
+    "edits": null,
+    "rationale": "Within customer goodwill budget",
+    "decided_at": "2026-10-15T07:31:00.000000+00:00"
+  },
+  "audit_event": {
+    "event_id": "01M4Z7G2C1MV8B9SEKQQRA1VKT",
+    "occurred_at": "2026-10-15T07:30:16.610000+00:00",
+    "actor_type": "system",
+    "actor_id": "system",
+    "action": "action_recorded",
+    "entity_type": "action_record",
+    "entity_id": "01M4Z7G2C15HBAAH84WQC16CM2",
+    "correlation_id": "01M4Z7G2C1VECY8WM2P7ST5JSH",
+    "payload": {"disposition": "require_approval"}
+  }
+}

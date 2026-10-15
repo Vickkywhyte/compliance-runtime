@@ -2,6 +2,34 @@
 
 Newest-first order.
 
+## Phase 2 — Storage + evidence foundations
+**2026-10-15 — Completed**
+
+- 11 new files: SQLite migration (001_initial.sql, 128 lines, full
+  schema from 05_DATA_SPEC.md §7), migrate.py with schema_migrations
+  tracking, 5 repositories (tool_calls, evaluations, action_records,
+  approvals), migrate selftest, 2 test files, 1 fixture file
+- 3 modified files: exceptions.py (+StorageError, +MigrationError),
+  doctor.py (registers 6 new modules -> 19 total), Makefile (real
+  migrate target + 02-migrate-selftest)
+- Tests: 65 passing (28 -> 63 -> 65)
+- All 7 tables from §7 present; all 6 append-only triggers verified
+  by direct SQL UPDATE/DELETE rejection
+- Every repository has read-back tests (Lesson 5)
+- Migration is idempotent (schema_migrations tracking)
+- Security controls verified: C-10, C-11, C-14, C-34
+
+Two defects found and fixed during verification:
+1. Repositories depended on caller's row_factory; a raw sqlite3.connect
+   produced ValueError instead of ChainIntegrityError. Fixed: each
+   repository sets self._conn.row_factory = sqlite3.Row in __init__.
+   Added 2 regression tests.
+2. db.py contained a dead duplicate schema (_SCHEMA + migrate()) that
+   diverged from 001_initial.sql. Removed; single source of truth is
+   now storage/migrations/*.sql applied via storage/migrate.py.
+
+ADRs applied: ADR-003, ADR-008, ADR-015
+
 ## Phase 1 — Scaffolding + safety rails
 **2026-10-15 — Completed**
 

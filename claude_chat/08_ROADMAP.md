@@ -441,7 +441,7 @@ make serve & sleep 5 && curl -s localhost:8501 | head -20 && python scripts/dash
 
 ---
 
-## Phase 9 — Dossier generator + mock agent + demo ⚪
+## Phase 9 — Dossier generator + mock agent + demo 🟢
 
 **Goal:** Generate PDF compliance dossier. Ship mock agent and demo
 command.

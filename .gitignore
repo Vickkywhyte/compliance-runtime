@@ -1,0 +1,72 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+*.pth
+
+# Data (large; not version-controlled)
+data/runtime.db
+data/runtime.db-shm
+data/runtime.db-wal
+data/runtime.db-journal
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.db-journal
+data/raw/
+data/processed/
+data/cache/
+data/keys/
+
+# Evidence keys (NEVER commit)
+*.pem
+*.key
+**/signing_key.pem
+**/verification_key.pem
+
+# Results (regenerated)
+results/evals/
+results/dossiers/
+results/figures/
+
+# Logs
+logs/app.jsonl*
+logs/cost.jsonl
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+
+# ruff
+.ruff_cache/
+
+# Secrets baseline (if used)
+.secrets.baseline

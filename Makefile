@@ -8,7 +8,7 @@ PYTHON ?= python
         clean clean-cache clean-data \
         migrate 02-migrate-selftest policy-validate 03-policy-selftest \
         04-evidence-selftest approve-selftest 06-runtime-selftest \
-        eval demo serve dossier verify
+        07-eval-selftest eval-mini eval demo serve dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -60,8 +60,14 @@ policy-validate: ## Validate every policy file (Phase 3)
 03-policy-selftest: ## Phase 3 policy engine self-test
 	$(PYTHON) scripts/03_policy_selftest.py
 
-eval: ## (stub) run the evaluation harness — Phase 7
-	@echo "eval: not implemented yet (Phase 7)" >&2; exit 1
+eval: ## Run the evaluation harness on the full benchmark (Phase 7)
+	$(PYTHON) scripts/07_eval.py
+
+eval-mini: ## Run the evaluation harness on the 20-entry mini benchmark
+	$(PYTHON) scripts/07_eval.py --mini
+
+07-eval-selftest: ## Phase 7 evaluation self-test
+	$(PYTHON) scripts/07_eval_selftest.py
 
 demo: ## (stub) run the end-to-end demo — Phase 9
 	@echo "demo: not implemented yet (Phase 9)" >&2; exit 1

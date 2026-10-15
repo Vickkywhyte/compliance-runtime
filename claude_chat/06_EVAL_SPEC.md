@@ -258,6 +258,12 @@ confirms the runtime intercepts it.
 | `evidence_write_p50_ms` | Median evidence write time | ≤ 20 |
 | `cost_per_1k_actions_usd` | Extrapolated cost (always $0 for v1) | 0.00 |
 
+> **`evidence_write_p50_ms` is a proxy** in v1: it is computed as
+> `max(0, runtime_overhead_p50_ms − policy_eval_p50_ms)` per entry,
+> because the pipeline does not expose a dedicated evidence-write
+> timer. It is a non-negative estimate of evidence-write time under
+> load. A dedicated timer may be added in v1.1.
+
 ## 7. Aggregate reporting
 
 Every evaluation run produces `results/evals/{timestamp}.json`:
@@ -268,7 +274,7 @@ Every evaluation run produces `results/evals/{timestamp}.json`:
   "run_at": "2026-10-15T14:00:00Z",
   "benchmark_hash": "abc123...",
   "n_entries": 200,
-  "metrics": {
+  "aggregate_metrics": {
     "policy_precision": 0.92,
     "policy_recall": 0.96,
     "false_positive_rate": 0.04,
@@ -299,16 +305,39 @@ Every evaluation run produces `results/evals/{timestamp}.json`:
     }
   ],
   "aggregate_ci": {
-    "policy_precision": [0.88, 0.95],
-    "policy_recall": [0.93, 0.98]
+    "policy_coverage": [0.88, 0.95],
+    "chain_integrity": [1.00, 1.00]
   }
 }
 ```
 
+> **Note on `aggregate_ci`:** this dict contains CI tuples only for the
+> seven metrics listed in §8 (policy_coverage, audit_completeness,
+> chain_integrity, signature_validity, approval_rate, override_rate,
+> auto_deny_rate) — not for the four conditional-denominator metrics
+> (policy_precision, policy_recall, false_positive_rate,
+> false_negative_rate).
+
 ## 8. Statistical hygiene
 
-- **Confidence intervals:** bootstrap 1,000 samples, 95% interval.
-  Reported on all aggregate metrics where n ≥ 20.
+- **Confidence intervals:** bootstrap 1,000 samples, 95% interval,
+  fixed seed (configs/eval.yaml, default 0).
+
+  CIs are reported on metrics that have a well-defined per-entry mean
+  suitable for bootstrapping. In v1 these are:
+  - policy_coverage
+  - audit_completeness
+  - chain_integrity
+  - signature_validity
+  - approval_rate
+  - override_rate
+  - auto_deny_rate
+
+  Ratio metrics with conditional denominators (policy_precision,
+  policy_recall, false_positive_rate, false_negative_rate) are NOT
+  bootstrapped in v1 — the denominator depends on which entries
+  triggered a given disposition, which breaks the i.i.d. assumption
+  of the bootstrap. A denominator-aware CI is a v1.1 concern.
 - **Determinism:** no LLM calls in the eval path. Same benchmark →
   same metrics.
 - **No claims below CI width:** if two configs differ by less than the

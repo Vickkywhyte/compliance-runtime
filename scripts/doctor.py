@@ -60,6 +60,17 @@ MODULES = [
     "compliance_runtime.interception.pipeline",
     "compliance_runtime.interception.sdk",
     "compliance_runtime.interception.server",
+    "compliance_runtime.evaluation",
+    "compliance_runtime.evaluation.metrics",
+    "compliance_runtime.evaluation.metrics.base",
+    "compliance_runtime.evaluation.metrics.enforcement",
+    "compliance_runtime.evaluation.metrics.evidence",
+    "compliance_runtime.evaluation.metrics.oversight",
+    "compliance_runtime.evaluation.metrics.operational",
+    "compliance_runtime.evaluation.benchmark",
+    "compliance_runtime.evaluation.runner",
+    "compliance_runtime.evaluation.report",
+    "compliance_runtime.evaluation.stats",
 ]
 
 

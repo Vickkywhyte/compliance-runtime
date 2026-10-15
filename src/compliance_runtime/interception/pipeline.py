@@ -161,6 +161,14 @@ class RuntimePipeline:
         """Verify the full evidence chain and signatures."""
         return EvidenceVerifier(self._action_records).verify_all()
 
+    def verify_chain_for(self, action_id: str) -> VerificationReport:
+        """Verify one record's hash + signature (used by the evaluator)."""
+        return EvidenceVerifier(self._action_records).verify_one(action_id)
+
+    def get_evaluations_for_call(self, call_id: str) -> list[PolicyEvaluation]:
+        """Return the persisted policy evaluations for a call."""
+        return self._evaluations.get_by_call(call_id)
+
     def close(self) -> None:
         """Close the underlying DB connection."""
         self._tool_calls._conn.close()

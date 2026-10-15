@@ -89,6 +89,17 @@ class MigrationError(StorageError):
     """Raised when a schema migration cannot be applied."""
 
 
+# --- Evaluation ----------------------------------------------------------
+
+
+class EvalError(ComplianceRuntimeError):
+    """Raised for evaluation-harness failures."""
+
+
+class BenchmarkValidationError(EvalError):
+    """Raised when a benchmark dataset fails its quality gate."""
+
+
 # --- Catch-all internal --------------------------------------------------
 
 
@@ -111,6 +122,8 @@ _ALL_EXCEPTIONS = (
     SigningKeyError,
     StorageError,
     MigrationError,
+    EvalError,
+    BenchmarkValidationError,
     RuntimeInternalError,
 )
 
@@ -126,6 +139,7 @@ def _self_test() -> None:
     assert issubclass(ConcurrentModificationError, ApprovalError)
     assert issubclass(ExpiredApprovalError, ApprovalError)
     assert issubclass(MigrationError, StorageError)
+    assert issubclass(BenchmarkValidationError, EvalError)
     # SigningKeyError must NOT be the builtin KeyError.
     assert SigningKeyError is not KeyError
     assert not issubclass(SigningKeyError, KeyError)

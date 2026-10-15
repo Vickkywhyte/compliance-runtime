@@ -2,6 +2,45 @@
 
 Newest-first order.
 
+## Phase 7 — Evaluation harness
+**2026-10-15 — Completed**
+
+- 19 new files: evaluation package (Metric ABC, 4 metric modules
+  covering 17 metrics, benchmark loader + quality gate, runner,
+  report, stats, registry), 2 scripts (07_eval, 07_eval_selftest),
+  4 test files, 2 fixture files (metrics_cases.json, benchmark_mini.jsonl)
+- 5 modified files: exceptions.py (+EvalError, +BenchmarkValidationError),
+  interception/pipeline.py (+verify_chain_for, +get_evaluations_for_call),
+  pyproject.toml (+numpy>=1.26), doctor.py (+11 modules -> 58),
+  Makefile (real eval, eval-mini, 07-eval-selftest)
+- 2 spec updates to 06_EVAL_SPEC.md: §6 documents evidence_write_p50_ms
+  as a proxy; §7 JSON key renamed to aggregate_metrics; §8 CI list
+  reduced to the 7 metrics with well-defined per-entry means
+- Tests: 321 passing (was 275)
+
+Metrics implemented (17 total):
+- Enforcement (5): policy_precision, policy_recall, false_positive_rate,
+  false_negative_rate, policy_coverage
+- Evidence (3): audit_completeness, chain_integrity, signature_validity
+- Oversight (5): approval_latency_p50_ms, approval_latency_p95_ms,
+  approval_rate, override_rate, auto_deny_rate
+- Operational (4): runtime_overhead_p50_ms, policy_eval_p50_ms,
+  evidence_write_p50_ms (proxy), cost_per_1k_actions_usd
+
+Verified:
+- Every metric has positive + negative fixtures (06_EVAL_SPEC §9)
+- Quality gate catches 8 failure modes
+- bootstrap_ci deterministic with fixed seed, handles list + numpy,
+  raises on empty input
+- Two runs of `make eval-mini` produce identical deterministic metrics
+  (11 metrics compared; timing metrics excluded by design)
+- aggregate_ci contains exactly the 7 CI-eligible metrics
+- chain_integrity = 1.0 and signature_validity = 1.0 on mini benchmark
+- Zero LLM/HTTP imports in evaluation path (ADR-013)
+- Eval is hermetic (temp DB + temp key dir)
+
+ADRs applied: ADR-011, ADR-012
+
 ## Phase 6 — Interception layer (HTTP + SDK)
 **2026-10-15 — Completed**
 

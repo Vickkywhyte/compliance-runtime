@@ -14,6 +14,7 @@ authors = [{ name = "Vickky Whyte", email = "vickkywhyte@gmail.com" }]
 # Runtime dependencies (free-tier stack; NO LLM SDKs — ADR-013).
 dependencies = [
     "pydantic>=2.8",
+    "numpy>=1.26",
     "structlog>=24.4",
     "python-dotenv>=1.0",
     "pyyaml>=6.0",

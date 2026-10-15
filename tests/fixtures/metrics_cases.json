@@ -1,0 +1,115 @@
+{
+  "policy_precision": {
+    "perfect": {
+      "context": {
+        "golden": [{"expected_disposition": "deny"}, {"expected_disposition": "deny"}],
+        "actual": [{"disposition": "deny", "matched_rule_id": "r"}, {"disposition": "deny", "matched_rule_id": "r"}]
+      },
+      "expected": 1.0
+    },
+    "one_fp": {
+      "context": {
+        "golden": [{"expected_disposition": "deny"}, {"expected_disposition": "allow"}],
+        "actual": [{"disposition": "deny", "matched_rule_id": "r"}, {"disposition": "deny", "matched_rule_id": "r"}]
+      },
+      "expected": 0.5
+    }
+  },
+  "policy_recall": {
+    "perfect": {
+      "context": {
+        "golden": [{"expected_disposition": "deny"}, {"expected_disposition": "deny"}],
+        "actual": [{"disposition": "deny", "matched_rule_id": "r"}, {"disposition": "deny", "matched_rule_id": "r"}]
+      },
+      "expected": 1.0
+    },
+    "one_fn": {
+      "context": {
+        "golden": [{"expected_disposition": "deny"}, {"expected_disposition": "deny"}],
+        "actual": [{"disposition": "deny", "matched_rule_id": "r"}, {"disposition": "allow", "matched_rule_id": "r"}]
+      },
+      "expected": 0.5
+    }
+  },
+  "false_positive_rate": {
+    "perfect_zero": {
+      "context": {
+        "golden": [{"expected_disposition": "allow"}, {"expected_disposition": "allow"}],
+        "actual": [{"disposition": "allow", "matched_rule_id": "r"}, {"disposition": "allow", "matched_rule_id": "r"}]
+      },
+      "expected": 0.0
+    },
+    "one_violation": {
+      "context": {
+        "golden": [{"expected_disposition": "allow"}, {"expected_disposition": "allow"}],
+        "actual": [{"disposition": "deny", "matched_rule_id": "r"}, {"disposition": "allow", "matched_rule_id": "r"}]
+      },
+      "expected": 0.5
+    }
+  },
+  "false_negative_rate": {
+    "perfect_zero": {
+      "context": {
+        "golden": [{"expected_disposition": "deny"}, {"expected_disposition": "deny"}],
+        "actual": [{"disposition": "deny", "matched_rule_id": "r"}, {"disposition": "deny", "matched_rule_id": "r"}]
+      },
+      "expected": 0.0
+    },
+    "one_violation": {
+      "context": {
+        "golden": [{"expected_disposition": "deny"}, {"expected_disposition": "deny"}],
+        "actual": [{"disposition": "allow", "matched_rule_id": "r"}, {"disposition": "deny", "matched_rule_id": "r"}]
+      },
+      "expected": 0.5
+    }
+  },
+  "policy_coverage": {
+    "perfect": {
+      "context": {
+        "golden": [{"expected_disposition": "allow"}, {"expected_disposition": "allow"}],
+        "actual": [{"disposition": "allow", "matched_rule_id": "r"}, {"disposition": "allow", "matched_rule_id": "r"}]
+      },
+      "expected": 1.0
+    },
+    "gap": {
+      "context": {
+        "golden": [{"expected_disposition": "allow"}, {"expected_disposition": "allow_with_flag"}],
+        "actual": [{"disposition": "allow", "matched_rule_id": "r"}, {"disposition": "allow_with_flag", "matched_rule_id": null}]
+      },
+      "expected": 0.5
+    }
+  },
+  "audit_completeness": {
+    "full": {"context": {"actual": [{"evidence_complete": true}, {"evidence_complete": true}, {"evidence_complete": true}]}, "expected": 1.0},
+    "partial": {"context": {"actual": [{"evidence_complete": true}, {"evidence_complete": true}, {"evidence_complete": false}]}, "expected": 0.6666666666666666}
+  },
+  "chain_integrity": {
+    "all_valid": {"context": {"actual": [{"chain_ok": true}, {"chain_ok": true}, {"chain_ok": true}]}, "expected": 1.0},
+    "broken": {"context": {"actual": [{"chain_ok": true}, {"chain_ok": false}, {"chain_ok": true}]}, "expected": 0.6666666666666666}
+  },
+  "signature_validity": {
+    "all_valid": {"context": {"actual": [{"signature_ok": true}, {"signature_ok": true}, {"signature_ok": true}]}, "expected": 1.0},
+    "broken": {"context": {"actual": [{"signature_ok": true}, {"signature_ok": true}, {"signature_ok": false}]}, "expected": 0.6666666666666666}
+  },
+  "approval_latency_p50_ms": {
+    "case": {"context": {"approvals": [{"state": "approved", "latency_ms": 10000}, {"state": "approved", "latency_ms": 20000}, {"state": "approved", "latency_ms": 30000}]}, "expected": 20000.0}
+  },
+  "approval_latency_p95_ms": {
+    "case": {"context": {"approvals": [{"state": "approved", "latency_ms": 10000}, {"state": "approved", "latency_ms": 20000}, {"state": "approved", "latency_ms": 30000}, {"state": "approved", "latency_ms": 40000}, {"state": "approved", "latency_ms": 50000}]}, "expected": 48000.0}
+  },
+  "approval_rate": {
+    "all_approved": {"context": {"approvals": [{"state": "approved", "latency_ms": 1}, {"state": "approved", "latency_ms": 1}, {"state": "modified_approved", "latency_ms": 1}]}, "expected": 1.0}
+  },
+  "override_rate": {
+    "with_overrides": {"context": {"approvals": [{"state": "approved", "latency_ms": 1}, {"state": "modified_approved", "latency_ms": 1}]}, "expected": 0.5}
+  },
+  "auto_deny_rate": {
+    "with_expirations": {"context": {"approvals": [{"state": "approved", "latency_ms": 1}, {"state": "approved", "latency_ms": 1}, {"state": "expired", "latency_ms": null}, {"state": "denied", "latency_ms": 1}]}, "expected": 0.25}
+  },
+  "runtime_overhead_p50_ms": {
+    "case": {"context": {"timings": {"runtime_overhead_ms": [50, 60, 70]}}, "expected": 60.0}
+  },
+  "cost_per_1k_actions_usd": {
+    "case": {"context": {}, "expected": 0.0}
+  }
+}

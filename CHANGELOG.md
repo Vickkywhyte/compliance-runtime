@@ -2,6 +2,52 @@
 
 Newest-first order.
 
+## Phase 8 — Dashboard (Streamlit)
+**2026-10-15 — Completed**
+
+- 16 new files: dashboard package (app, state, theme, 4 views,
+  4 components), dashboard selftest, dashboard views test
+- 3 modified files: interception/pipeline.py (+all_action_records,
+  +get_tool_call read-only accessors), doctor.py (+14 modules -> 72),
+  Makefile (+serve-dashboard, +dashboard-selftest; serve unchanged)
+- Tests: 329 passing (was 321)
+
+Views:
+- Live Actions: filterable table of tool calls + dispositions with
+  drill-down to policy evaluation, action record, and evidence link
+- Approvals: pending requests filtered by role, approve/edit+approve/
+  reject actions routed through pipeline.decide_approval
+- Evidence Chain: paginated table of ActionRecords with hash truncation;
+  verify-one + verify-all actions
+- Compliance Summary: reads results/evals/*.json, shows 4 CI-eligible
+  summary cards + full 17-metric table
+
+Security:
+- C-06 (HTML escape): single safe() helper wraps html.escape; audit
+  found no unescaped display sites for user/DB data
+- C-30 (policy hash): sidebar shows content_hash
+- No repository bypass: static check + line-grep confirm dashboard
+  imports no storage repositories; single decision site is
+  pipeline.decide_approval
+- Selftest is hermetic: MagicMock streamlit, real in-memory pipeline,
+  no browser, no network
+
+Verified:
+- Every render function callable via mocked streamlit
+- test_safe_escapes_html: '<script>' -> '&lt;script&gt;'
+- test_approval_form_uses_pipeline: import-graph guard passes
+- Badge colors distinct per disposition (4) and severity (4)
+- 8 dashboard view tests + 11 selftest assertions pass
+
+ADRs applied: ADR-012 (Streamlit dashboard), ADR-007 (approval
+locking preserved — no UI bypass)
+
+Note: app.py reads pipeline._engine._policy_set (read-only) for the
+sidebar policy panel. This is the third read-only private-attribute
+access in the project (after Phase 5's repo._conn and Phase 6's
+approval_service._requests). A v2 refactor to expose a public
+pipeline.policy_set property is noted as a code-quality improvement.
+
 ## Phase 7 — Evaluation harness
 **2026-10-15 — Completed**
 

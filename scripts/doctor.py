@@ -71,6 +71,20 @@ MODULES = [
     "compliance_runtime.evaluation.runner",
     "compliance_runtime.evaluation.report",
     "compliance_runtime.evaluation.stats",
+    "compliance_runtime.dashboard",
+    "compliance_runtime.dashboard.app",
+    "compliance_runtime.dashboard.state",
+    "compliance_runtime.dashboard.theme",
+    "compliance_runtime.dashboard.views",
+    "compliance_runtime.dashboard.views.live_actions",
+    "compliance_runtime.dashboard.views.approvals",
+    "compliance_runtime.dashboard.views.evidence_chain",
+    "compliance_runtime.dashboard.views.compliance_summary",
+    "compliance_runtime.dashboard.components",
+    "compliance_runtime.dashboard.components.disposition_badge",
+    "compliance_runtime.dashboard.components.approval_form",
+    "compliance_runtime.dashboard.components.chain_viewer",
+    "compliance_runtime.dashboard.components.policy_info",
 ]
 
 

@@ -8,7 +8,8 @@ PYTHON ?= python
         clean clean-cache clean-data \
         migrate 02-migrate-selftest policy-validate 03-policy-selftest \
         04-evidence-selftest approve-selftest 06-runtime-selftest \
-        07-eval-selftest eval-mini eval demo serve dossier verify
+        07-eval-selftest eval-mini eval demo serve serve-dashboard \
+        dashboard-selftest dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -74,6 +75,12 @@ demo: ## (stub) run the end-to-end demo — Phase 9
 
 serve: ## Start the FastAPI runtime server (Phase 6)
 	$(PYTHON) -m uvicorn compliance_runtime.interception.server:app --host 0.0.0.0 --port 8000
+
+serve-dashboard: ## Start the Streamlit dashboard (Phase 8)
+	streamlit run src/compliance_runtime/dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+
+dashboard-selftest: ## Phase 8 dashboard render self-test (headless)
+	$(PYTHON) scripts/dashboard_selftest.py
 
 06-runtime-selftest: ## Phase 6 runtime pipeline self-test
 	$(PYTHON) scripts/06_runtime_selftest.py

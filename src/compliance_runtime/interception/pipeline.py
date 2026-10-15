@@ -153,6 +153,14 @@ class RuntimePipeline:
         """Return one action record, or None."""
         return self._action_records.get_by_id(action_id)
 
+    def all_action_records(self) -> list[ActionRecord]:
+        """Return every action record in chain (insertion) order."""
+        return self._action_records.list_all()
+
+    def get_tool_call(self, call_id: str) -> ToolCall | None:
+        """Return the tool call for ``call_id``, or None."""
+        return self._tool_calls.get_by_id(call_id)
+
     def get_evidence_chain_for_call(self, call_id: str) -> list[ActionRecord]:
         """Return all action records for a given call."""
         return self._action_records.get_by_call(call_id)

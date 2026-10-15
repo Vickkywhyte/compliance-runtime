@@ -7,7 +7,8 @@ PYTHON ?= python
 .PHONY: help sync doctor test selftest lock \
         clean clean-cache clean-data \
         migrate 02-migrate-selftest policy-validate 03-policy-selftest \
-        04-evidence-selftest approve-selftest eval demo serve dossier verify
+        04-evidence-selftest approve-selftest 06-runtime-selftest \
+        eval demo serve dossier verify
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -65,8 +66,11 @@ eval: ## (stub) run the evaluation harness — Phase 7
 demo: ## (stub) run the end-to-end demo — Phase 9
 	@echo "demo: not implemented yet (Phase 9)" >&2; exit 1
 
-serve: ## (stub) start the runtime + dashboard — Phase 6/8
-	@echo "serve: not implemented yet (Phase 6/8)" >&2; exit 1
+serve: ## Start the FastAPI runtime server (Phase 6)
+	$(PYTHON) -m uvicorn compliance_runtime.interception.server:app --host 0.0.0.0 --port 8000
+
+06-runtime-selftest: ## Phase 6 runtime pipeline self-test
+	$(PYTHON) scripts/06_runtime_selftest.py
 
 dossier: ## (stub) generate a compliance dossier — Phase 9
 	@echo "dossier: not implemented yet (Phase 9)" >&2; exit 1

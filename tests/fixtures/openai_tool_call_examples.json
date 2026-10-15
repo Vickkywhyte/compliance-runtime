@@ -1,0 +1,76 @@
+{
+  "valid_single_tool_call": {
+    "tool_calls": [
+      {
+        "id": "call_abc123",
+        "type": "function",
+        "function": {
+          "name": "issue_refund",
+          "arguments": "{\"amount\": 250, \"currency\": \"EUR\"}"
+        }
+      }
+    ],
+    "agent_id": "support_agent_v3",
+    "session_id": "sess_abc"
+  },
+  "valid_with_complex_arguments": {
+    "tool_calls": [
+      {
+        "id": "call_def456",
+        "type": "function",
+        "function": {
+          "name": "issue_refund",
+          "arguments": "{\"amount\": 850, \"currency\": \"EUR\", \"meta\": {\"source\": \"chat\", \"tags\": [\"vip\", \"priority\"]}}"
+        }
+      }
+    ],
+    "agent_id": "support_agent_v3",
+    "session_id": "sess_def"
+  },
+  "malformed_missing_function": {
+    "tool_calls": [
+      {
+        "id": "call_ghi789",
+        "type": "function"
+      }
+    ],
+    "agent_id": "support_agent_v3",
+    "session_id": "sess_ghi"
+  },
+  "malformed_bad_arguments_json": {
+    "tool_calls": [
+      {
+        "id": "call_jkl012",
+        "type": "function",
+        "function": {
+          "name": "issue_refund",
+          "arguments": "{not valid json"
+        }
+      }
+    ],
+    "agent_id": "support_agent_v3",
+    "session_id": "sess_jkl"
+  },
+  "multiple_tool_calls": {
+    "tool_calls": [
+      {
+        "id": "call_first",
+        "type": "function",
+        "function": {
+          "name": "issue_refund",
+          "arguments": "{\"amount\": 100}"
+        }
+      },
+      {
+        "id": "call_second",
+        "type": "function",
+        "function": {
+          "name": "issue_refund",
+          "arguments": "{\"amount\": 9999}"
+        }
+      }
+    ],
+    "agent_id": "support_agent_v3",
+    "session_id": "sess_multi"
+  }
+}

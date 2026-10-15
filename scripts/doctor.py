@@ -49,6 +49,17 @@ MODULES = [
     "compliance_runtime.approvals.service",
     "compliance_runtime.approvals.state",
     "compliance_runtime.approvals.ttl",
+    "compliance_runtime.dispositions",
+    "compliance_runtime.dispositions.allow",
+    "compliance_runtime.dispositions.deny",
+    "compliance_runtime.dispositions.approval",
+    "compliance_runtime.dispositions.flagged",
+    "compliance_runtime.interception",
+    "compliance_runtime.interception.models",
+    "compliance_runtime.interception.openai_compat",
+    "compliance_runtime.interception.pipeline",
+    "compliance_runtime.interception.sdk",
+    "compliance_runtime.interception.server",
 ]
 
 

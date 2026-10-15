@@ -84,6 +84,9 @@ class EvaluationResult(BaseModel):
     policy_version: str
     evaluated_at: datetime
     evaluation_duration_ms: int
+    # Enforcement of the matched rule (role/severity/ttl for approvals);
+    # None when no rule matched or the disposition came from a gate.
+    matched_rule_enforcement: PolicyEnforcement | None = None
 
 
 def _self_test() -> None:

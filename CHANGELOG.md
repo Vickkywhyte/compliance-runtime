@@ -2,6 +2,40 @@
 
 Newest-first order.
 
+## Phase 6 — Interception layer (HTTP + SDK)
+**2026-10-15 — Completed**
+
+- 18 new files: interception package (models, openai_compat, pipeline,
+  sdk, server), dispositions package (allow, deny, approval, flagged,
+  dispatcher), runtime selftest, 5 test files, 1 fixture file
+- 4 modified files: policy/models.py (+matched_rule_enforcement on
+  EvaluationResult), policy/engine.py (populates it on match),
+  scripts/doctor.py (+11 modules -> 47), Makefile (real serve target
+  + 06-runtime-selftest)
+- Tests: 275 passing (was 234)
+
+Functionality:
+- RuntimePipeline: ToolCall -> policy eval -> evidence -> disposition
+  -> (approval request if needed) -> RuntimeResponse
+- Python SDK: ToolExecutor.from_config + execute + context manager
+- FastAPI server: /health, /v1/tools/execute, /v1/tools/execute-openai,
+  /v1/approvals*, /v1/evidence*, all async
+- OpenAI-compatible function call parsing + response serialization
+- Four disposition handlers are pure (no I/O); tested
+- Determinism verified: same input -> same disposition + matched_rule_id
+
+Verified:
+- Allow path writes tool_call + policy_evaluation + action_record;
+  chain integrity 1.0
+- Deny path returns structured error with rule_id
+- require_approval creates real ApprovalRequest with assignee_role
+  and severity sourced from matched_rule_enforcement
+- Same input -> same disposition; unique action_ids per call
+- Zero LLM SDK imports (ADR-013)
+- Error envelope: 422 on bad input, no traceback leaked
+
+ADRs applied: ADR-002, ADR-006, ADR-010, ADR-011, ADR-013, ADR-018
+
 ## Phase 5 — Approval workflow
 **2026-10-15 — Completed**
 

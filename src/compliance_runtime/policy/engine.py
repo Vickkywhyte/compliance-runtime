@@ -142,6 +142,7 @@ class PolicyEngine:
         started: float,
         matched_rule_id: str | None = None,
         matched_rule_priority: int | None = None,
+        matched_rule_enforcement: Any = None,
     ) -> EvaluationResult:
         return EvaluationResult(
             disposition=disposition,
@@ -154,6 +155,7 @@ class PolicyEngine:
             evaluation_duration_ms=max(
                 0, int((time.perf_counter() - started) * 1000)
             ),
+            matched_rule_enforcement=matched_rule_enforcement,
         )
 
     def _rule_matches(
@@ -221,6 +223,7 @@ class PolicyEngine:
                     started,
                     matched_rule_id=rule.id,
                     matched_rule_priority=rule.priority,
+                    matched_rule_enforcement=rule.enforce,
                 )
 
         # 4. No rule matched → default disposition.

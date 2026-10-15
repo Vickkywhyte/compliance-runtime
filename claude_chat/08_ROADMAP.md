@@ -353,7 +353,7 @@ python scripts/06_runtime_selftest.py && pytest tests/test_server.py tests/test_
 
 ---
 
-## Phase 7 — Evaluation harness ⚪
+## Phase 7 — Evaluation harness 🟢
 
 **Goal:** Benchmark dataset + metric implementations + report.
 

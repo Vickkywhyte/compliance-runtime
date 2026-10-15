@@ -102,7 +102,8 @@ All with bootstrap confidence intervals. All measured against a
 | Phase 4 — Evidence recorder + verifier | 🟢 Complete | Phase 5 next |
 | Phase 5 — Approval workflow | 🟢 Complete | Phase 6 next |
 | Phase 6 — Interception layer (HTTP + SDK) | 🟢 Complete | Phase 7 next |
-| Phases 7–11 | ⚪ Not started | See `08_ROADMAP.md` |
+| Phase 7 — Evaluation harness | 🟢 Complete | Phase 8 next |
+| Phases 8–11 | ⚪ Not started | See `08_ROADMAP.md` |
 
 **Legend:** 🟢 done · 🟡 in progress · ⚪ not started · 🔴 blocked
 

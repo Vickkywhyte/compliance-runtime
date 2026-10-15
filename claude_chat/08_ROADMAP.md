@@ -271,7 +271,7 @@ python scripts/04_evidence_selftest.py && pytest tests/test_recorder.py tests/te
 
 ---
 
-## Phase 5 — Approval workflow ⚪
+## Phase 5 — Approval workflow 🟢
 
 **Goal:** Create approval requests, transition with optimistic locking,
 expire on TTL.

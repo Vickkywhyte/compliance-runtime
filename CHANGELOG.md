@@ -16,6 +16,12 @@ Newest-first order.
 - Zero runtime cost ($0)
 - Zero LLM dependencies in the runtime
 
+### CI exceptions
+
+- PYSEC-2026-3447 (setuptools, MANIFEST.in sdist) — inapplicable;
+  documented in docs/security.md. Project does not publish
+  packages or build sdists.
+
 ## Phase 11 — Documentation + launch
 **2026-10-16 — Completed**
 

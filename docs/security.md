@@ -79,6 +79,19 @@ uncompromised at signing time, or anything about data the runtime never saw.
 Please report suspected vulnerabilities privately to the maintainer rather than
 opening a public issue, and allow reasonable time for a fix before disclosure.
 
+## Vulnerability exceptions
+
+`pip-audit` is configured to skip the following advisory because it is
+inapplicable to this project:
+
+- **PYSEC-2026-3447** (`setuptools`): MANIFEST.in sdist packaging issue. This
+  project does not publish packages to PyPI, does not build source
+  distributions, and uses `setuptools` only for editable local installs. The
+  vulnerability path is unreachable.
+
+Any new advisory must be triaged and either fixed or documented here with a
+justification. Blanket ignores are not permitted.
+
 ## 7. Full model
 
 See [`claude_chat/07_SECURITY_MODEL.md`](../claude_chat/07_SECURITY_MODEL.md)

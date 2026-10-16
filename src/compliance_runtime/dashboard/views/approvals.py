@@ -42,10 +42,11 @@ def render(pipeline: Any, role: str) -> None:
         }
         for r in pending
     ]
-    st.dataframe(rows, use_container_width=True)
+    st.dataframe(rows, width="stretch", key="approvals_table")
 
     choice = st.selectbox(
-        "Decide on request", ["(none)", *[trunc(r.request_id) for r in pending]]
+        "Decide on request", ["(none)", *[trunc(r.request_id) for r in pending]],
+        key="approvals_decide_select",
     )
     if choice == "(none)":
         st.caption("Select a request to review.")

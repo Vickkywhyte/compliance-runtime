@@ -41,7 +41,10 @@ def main() -> None:
         except Exception:  # noqa: BLE001 - health indicator must not crash the app
             st.warning("Evidence chain unavailable")
         state.set_role(
-            st.selectbox("Reviewer role", ["compliance_officer", "ops", "admin"])
+            st.selectbox(
+                "Reviewer role", ["compliance_officer", "ops", "admin"],
+                key="app_reviewer_role",
+            )
         )
 
     tab_actions, tab_approvals, tab_evidence, tab_summary = st.tabs(

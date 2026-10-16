@@ -74,6 +74,32 @@ layer (FastAPI lazy router registration).
   self-tests
 - No sub-task is marked complete until its self-test passes
 
+## Lesson 2c — Cached resources must be safe to use from any thread
+
+**What went wrong.** Phase 6 shipped with SQLite connections created
+on the main thread and cached via st.cache_resource. On first render
+of the Streamlit dashboard everything worked because the whole page
+rendered on one thread. The moment the user interacted with any
+widget, Streamlit re-ran app.py on a NEW thread; the cached SQLite
+connection rejected the call with
+`sqlite3.ProgrammingError: SQLite objects created in a thread can only
+be used in that same thread`.
+
+**Cost.** ~45 minutes debugging after the widget-key fix surfaced
+the next layer of the problem.
+
+**Prevention.**
+- Any resource cached across requests (SQLite connection, HTTP client,
+  global pipeline) must be safe under the runtime's threading model.
+- For SQLite specifically: use `check_same_thread=False` when a
+  connection is cached and reused across the framework's worker
+  threads, and rely on WAL mode + a single-writer pattern for
+  safety.
+- CI smoke tests must exercise a cross-thread rerun (our
+  `test_pipeline_queryable_from_multiple_threads` does this).
+- The general rule: mocks don't enforce runtime constraints, and
+  "works on first render" is not "works on every interaction."
+
 ## Lesson 3 — Tests that pass without testing
 
 **What went wrong.** API tests passed even though routes weren't

@@ -62,4 +62,4 @@ def render_chain_table(records: list[Any], page: int, page_size: int) -> None:
         }
         for r in window
     ]
-    st.dataframe(rows, use_container_width=True)
+    st.dataframe(rows, width="stretch", key="chain_viewer_table")

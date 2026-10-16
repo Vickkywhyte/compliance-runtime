@@ -59,7 +59,7 @@ def render(results_dir: Path) -> None:
         return
 
     labels = [p.stem for p in runs]
-    chosen = st.selectbox("Eval run", labels)
+    chosen = st.selectbox("Eval run", labels, key="compliance_summary_run_selector")
     report = load_eval_report(runs[labels.index(chosen)])
     metrics = report.get("aggregate_metrics", {})
 
@@ -85,4 +85,4 @@ def render(results_dir: Path) -> None:
              "ci_half_width": _ci_half_width(report, name)}
             for name in names
         ]
-        st.dataframe(rows, use_container_width=True)
+        st.dataframe(rows, width="stretch", key=f"compliance_summary_table_{category}")

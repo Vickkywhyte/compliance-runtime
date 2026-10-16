@@ -71,6 +71,84 @@ def test_policy_info_shows_content_hash(monkeypatch) -> None:
     assert _POLICY.content_hash in coded
 
 
+def test_no_widget_collisions() -> None:
+    """Every interactive Streamlit widget in the dashboard declares a key=.
+
+    Streamlit derives element IDs from (widget type + args); two identical
+    widgets across views collide at runtime (StreamlitDuplicateElementId).
+    The mocked selftest can't catch this, so we parse the dashboard modules
+    with ast and require an explicit key= on every keyed widget call.
+    """
+    import ast
+
+    # Widgets that accept and need a stable key to avoid ID collisions.
+    # (form_submit_button, tabs, metric, columns do not take a key.)
+    keyed_widgets = {
+        "number_input", "text_input", "text_area", "selectbox", "button",
+        "radio", "checkbox", "slider", "multiselect", "dataframe", "form",
+    }
+    dashboard = Path("src/compliance_runtime/dashboard")
+    violations: list[str] = []
+
+    for path in sorted(dashboard.rglob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            if not isinstance(func, ast.Attribute) or func.attr not in keyed_widgets:
+                continue
+            if not any(kw.arg == "key" for kw in node.keywords):
+                violations.append(
+                    f"{path.relative_to(dashboard)}:{node.lineno}: "
+                    f".{func.attr}() missing key="
+                )
+
+    assert violations == [], "widgets missing key=:\n" + "\n".join(violations)
+
+
+def test_pipeline_queryable_from_multiple_threads(tmp_path: Path) -> None:
+    """A cached pipeline must be usable from a different thread (Lesson 2c).
+
+    Real repro of the Streamlit rerun bug: build the pipeline (and its SQLite
+    connection) on the main thread, then query it from a spawned thread. With
+    ``check_same_thread=False`` this must not raise ``sqlite3.ProgrammingError``.
+    """
+    import threading
+
+    from compliance_runtime.config.keys import set_keys_dir
+    from compliance_runtime.interception.models import ToolCallRequest
+    from compliance_runtime.interception.pipeline import build_pipeline
+
+    set_keys_dir(tmp_path)
+    try:
+        pipeline, _ = build_pipeline("configs/runtime.yaml", db_path=tmp_path / "d.db")
+        pipeline.execute(ToolCallRequest(
+            action="issue_refund", parameters={"amount": 250},
+            agent_id="a", session_id="s",
+        ))
+        # Main thread works.
+        assert len(pipeline.all_action_records()) == 1
+
+        captured: dict[str, object] = {}
+
+        def worker() -> None:
+            try:
+                captured["count"] = len(pipeline.all_action_records())
+            except Exception as exc:  # noqa: BLE001 - surface in the assert below
+                captured["error"] = exc
+
+        thread = threading.Thread(target=worker)
+        thread.start()
+        thread.join()
+
+        assert "error" not in captured, f"cross-thread query raised {captured.get('error')!r}"
+        assert captured["count"] == 1
+        pipeline.close()
+    finally:
+        set_keys_dir(None)
+
+
 def test_compliance_summary_reads_eval_files(tmp_path: Path) -> None:
     report = {
         "eval_id": "r1", "run_at": "2026-10-15T00:00:00+00:00",

@@ -24,7 +24,12 @@ def get_connection(db_path: str | None = None) -> sqlite3.Connection:
     path = db_path or _DEFAULT_DB_PATH
     if path != ":memory:":
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(path)
+    # check_same_thread=False is required because Streamlit re-runs
+    # app.py on a fresh thread per interaction and the pipeline is
+    # cached via st.cache_resource. WAL mode + single-writer pattern
+    # (BEGIN IMMEDIATE) make this safe for v1. A connection-per-
+    # request design is a v1.1 concern.
+    conn = sqlite3.connect(path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA foreign_keys=ON;")

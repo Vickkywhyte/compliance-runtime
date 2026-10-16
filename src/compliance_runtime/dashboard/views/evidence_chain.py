@@ -21,18 +21,21 @@ def render(pipeline: Any) -> None:
     st.header("Evidence Chain")
     records = pipeline.all_action_records()
 
-    if st.button("Verify entire chain"):
+    if st.button("Verify entire chain", key="evidence_chain_verify_all"):
         render_verification(pipeline.verify_chain())
 
     if not records:
         st.info("No evidence records yet.")
         return
 
-    page = int(st.number_input("Page", min_value=0, value=0, step=1))
+    page = int(st.number_input(
+        "Page", min_value=0, value=0, step=1, key="evidence_chain_page"
+    ))
     render_chain_table(records, page, _PAGE_SIZE)
 
     choice = st.selectbox(
-        "Inspect record", ["(none)", *[trunc(r.action_id) for r in records]]
+        "Inspect record", ["(none)", *[trunc(r.action_id) for r in records]],
+        key="evidence_chain_inspect",
     )
     if choice == "(none)":
         return

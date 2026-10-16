@@ -27,8 +27,12 @@ def render(pipeline: Any) -> None:
     actions = sorted({r.action for r in records})
     dispositions = sorted({r.disposition for r in records})
     col_a, col_d = st.columns(2)
-    action_filter = col_a.selectbox("Action", ["(all)", *actions])
-    disp_filter = col_d.selectbox("Disposition", ["(all)", *dispositions])
+    action_filter = col_a.selectbox(
+        "Action", ["(all)", *actions], key="live_actions_action_filter"
+    )
+    disp_filter = col_d.selectbox(
+        "Disposition", ["(all)", *dispositions], key="live_actions_disposition_filter"
+    )
 
     filtered = [
         r for r in records
@@ -36,7 +40,9 @@ def render(pipeline: Any) -> None:
         and (disp_filter in ("(all)", r.disposition))
     ]
 
-    page = int(st.number_input("Page", min_value=0, value=0, step=1))
+    page = int(st.number_input(
+        "Page", min_value=0, value=0, step=1, key="live_actions_page"
+    ))
     window = filtered[page * _PAGE_SIZE : (page + 1) * _PAGE_SIZE]
 
     table, detail = st.columns([2, 1])
@@ -52,9 +58,10 @@ def render(pipeline: Any) -> None:
             }
             for r in window
         ]
-        st.dataframe(rows, use_container_width=True)
+        st.dataframe(rows, width="stretch", key="live_actions_table")
         selected = st.selectbox(
-            "Inspect action", ["(none)", *[trunc(r.action_id) for r in window]]
+            "Inspect action", ["(none)", *[trunc(r.action_id) for r in window]],
+            key="live_actions_inspect",
         )
 
     with detail:

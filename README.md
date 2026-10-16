@@ -209,6 +209,29 @@ src/compliance_runtime/
 └── dashboard/     Streamlit app: live actions, approvals, evidence, summary
 ```
 
+## Screenshots
+
+### Live Actions
+![Live Actions](docs/screenshots/live-actions.png)
+*Every tool call and its disposition — allow, deny, require_approval,
+or allow_with_flag — with matched policy rule.*
+
+### Approvals
+![Approvals](docs/screenshots/approvals.png)
+*High-stakes actions await human decision. Approve, edit+approve, or
+reject with reason.*
+
+### Evidence Chain
+![Evidence Chain](docs/screenshots/evidence-chain.png)
+*SHA-256 hash chain with Ed25519 signatures. Verify per-record or the
+entire chain.*
+
+### Compliance Summary
+![Compliance Summary](docs/screenshots/compliance-summary.png)
+*Latest evaluation run — 17 metrics across enforcement, evidence,
+oversight, and operational categories, with bootstrap confidence
+intervals on the statistically valid metrics.*
+
 ## Status
 
 All 11 build phases are complete: scaffolding, storage, policy engine, evidence

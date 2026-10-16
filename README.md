@@ -5,7 +5,7 @@
 
 ![CI](https://github.com/Vickkywhyte/compliance-runtime/actions/workflows/ci.yml/badge.svg)
 ![Python 3.11](https://img.shields.io/badge/python-3.11-blue)
-![tests](https://img.shields.io/badge/tests-367%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-369%20passing-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-green)
 ![cost](https://img.shields.io/badge/cost%20to%20run-%240-brightgreen)
 
@@ -173,7 +173,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 
 make doctor             # verify every module imports
-make test               # run the test suite (367 passing)
+make test               # run the test suite (369 passing)
 make demo-noserve       # run the full demo end-to-end in < 1 second
 make serve-dashboard    # dashboard at http://localhost:8501
 make serve              # FastAPI runtime at http://localhost:8000

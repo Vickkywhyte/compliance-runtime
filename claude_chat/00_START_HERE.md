@@ -93,6 +93,8 @@ All with bootstrap confidence intervals. All measured against a
 
 ## Current status
 
+**Project status: 🟢 COMPLETE — all 11 phases shipped**
+
 | Phase | Status | Notes |
 |---|---|---|
 | Planning (`claude_chat/`) | 🟢 Complete | 13 docs locked |
@@ -106,7 +108,7 @@ All with bootstrap confidence intervals. All measured against a
 | Phase 8 — Dashboard | 🟢 Complete | Phase 9 next |
 | Phase 9 — Dossier generator + mock agent + demo | 🟢 Complete | Phase 10 next |
 | Phase 10 — Security hardening + Docker + CI | 🟢 Complete | Phase 11 next |
-| Phase 11 | ⚪ Not started | See `08_ROADMAP.md` |
+| Phase 11 — Documentation + launch | 🟢 Complete | Shipped |
 
 **Legend:** 🟢 done · 🟡 in progress · ⚪ not started · 🔴 blocked
 

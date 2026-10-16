@@ -2,6 +2,35 @@
 
 Newest-first order.
 
+## Project summary
+
+**Status: COMPLETE** — 11 of 11 phases.
+
+- 11 / 11 phases complete
+- 367 tests passing
+- 46 security controls cataloged (P0 + P1 + P2) (C-01…C-46)
+- 18 ADRs locked (immutable once written)
+- 17 evaluation metrics across 4 categories (enforcement, evidence,
+  oversight, operational)
+- Demo runs end-to-end in < 1 second
+- Zero runtime cost ($0)
+- Zero LLM dependencies in the runtime
+
+## Phase 11 — Documentation + launch
+**2026-10-16 — Completed**
+
+- README.md: public-facing rewrite with TL;DR, architecture, quick
+  start, security summary, evaluation explainer, 30-second pitch
+- CONTRIBUTING.md: dev setup, conventions, security considerations,
+  PR checklist
+- LICENSE: MIT (Victor Daniel)
+- PROJECT_BIBLE.md: plain-English master reference explaining the
+  entire project for non-technical readers while serving as the
+  canonical reference for contributors
+- docs/screenshots/: placeholder directory (screenshots added
+  post-launch)
+- Project status: COMPLETE
+
 ## Phase 10 — Security hardening + Docker + CI
 **2026-10-15 — Completed**
 

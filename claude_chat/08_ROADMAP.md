@@ -523,7 +523,7 @@ pytest tests/security/ -v && pip-audit && docker compose config && docker build 
 
 ---
 
-## Phase 11 — Documentation + launch ⚪
+## Phase 11 — Documentation + launch 🟢
 
 **Goal:** Public-facing README, CONTRIBUTING, LICENSE, screenshots,
 GitHub push.

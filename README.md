@@ -246,6 +246,16 @@ documentation pass. See [`CHANGELOG.md`](CHANGELOG.md) for the per-phase record.
 > did, or how the two were enforced. I built the open-source runtime that
 > closes that gap.*
 
+## How this was built
+
+I designed this system and built it with AI assistance. I want that to be clear to anyone reviewing the code.
+
+**My part.** I defined the problem from my work in financial crime compliance, set the scope and constraints, and wrote the design documents in [`claude_chat/`](claude_chat/). I drafted each document in conversation with Claude and made the final calls: the product requirements, the architecture, the threat model and the evaluation spec. The decisions that shape this repository are mine, including keeping every LLM out of the enforcement path, denying any call with missing or invalid fields, recording each decision in a signed hash chain, and mapping the evidence to EU AI Act Article 12. I reviewed every build phase against its checkpoint before moving on.
+
+**Claude Code's part.** Claude Code wrote the implementation phase by phase from those specs, following the rules in `CLAUDE.md`. Tests, CI and the evaluation harness check that the code meets the specs.
+
+**Why the specs stay in the repo.** They are the design record. A reviewer can read what the system was required to do and then check the code against it.
+
 ## Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md). Every change runs through the CI

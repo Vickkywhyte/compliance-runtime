@@ -239,6 +239,37 @@ recorder/verifier, approval workflow, interception (HTTP + SDK), evaluation
 harness, dashboard, dossier + demo, security hardening + Docker + CI, and this
 documentation pass. See [`CHANGELOG.md`](CHANGELOG.md) for the per-phase record.
 
+## Measurement harness API
+
+Three thin wrappers in `src/compliance_runtime/harness.py` let an external
+measurement harness talk to the runtime without coupling to its internals:
+
+```python
+from compliance_runtime import evaluate_action, append_measurement, read_chain_raw
+
+# 1. Evaluate a single action against the loaded policy — no side effects.
+disposition = evaluate_action(
+    action="issue_refund",
+    parameters={"amount": 1200},
+    context={"fraud_flags": ["credit_card_chargeback_risk"]},
+)
+# → "deny"
+
+# 2. Append a custom measurement entry to the hash chain.
+record = append_measurement(
+    db_path="data/runtime.db",
+    entry={"action": "harness_probe", "disposition": "allow", "probe_id": "p1"},
+)
+
+# 3. Read the raw chain bytes (JSON array, insertion order) without
+#    going through Pydantic deserialization.
+raw: bytes = read_chain_raw("data/runtime.db")
+```
+
+None of these functions alter existing logic; they delegate entirely to the
+core `policy.engine`, `evidence.recorder`, and `storage.action_records`
+modules.
+
 ## The 30-second pitch
 
 > *AI agents are being deployed to take real actions inside enterprises. Almost

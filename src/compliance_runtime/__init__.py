@@ -12,4 +12,15 @@ from __future__ import annotations
 
 __version__ = "0.1.0"
 
-__all__ = ["__version__"]
+from compliance_runtime.harness import (  # noqa: E402
+    append_measurement,
+    evaluate_action,
+    read_chain_raw,
+)
+
+__all__ = [
+    "__version__",
+    "evaluate_action",
+    "append_measurement",
+    "read_chain_raw",
+]

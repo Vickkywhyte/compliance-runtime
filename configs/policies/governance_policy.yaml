@@ -1,0 +1,186 @@
+# Governance policy — rules for the governance-measurement-harness vectors.
+# Rules are evaluated in ascending priority across ALL loaded policies;
+# the first all-true rule wins. Priorities in this file are chosen not to
+# conflict with demo_policy.yaml (which uses 5, 10, 100).
+name: governance_policy
+version: "1.0.0"
+rules:
+
+  # ── DENY: destructive / bulk operations (priority 1–9) ─────────────────
+
+  - id: deny_delete_records
+    priority: 1
+    description: "Deny any delete_records call — mass deletion requires out-of-band approval"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "delete_records"
+    enforce:
+      disposition: "deny"
+      reason: "Mass deletion is not permitted via automated agent"
+      severity: "critical"
+
+  - id: deny_bulk_update
+    priority: 2
+    description: "Deny unscoped bulk_update calls"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "bulk_update"
+    enforce:
+      disposition: "deny"
+      reason: "Unscoped bulk updates are not permitted via automated agent"
+      severity: "critical"
+
+  - id: deny_export_data_external
+    priority: 3
+    description: "Deny export_data to an external destination"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "export_data"
+      - field: "parameters.destination"
+        operator: "matches_regex"
+        value: "^external_"
+    enforce:
+      disposition: "deny"
+      reason: "Data export to external destinations is not permitted via automated agent"
+      severity: "critical"
+
+  # ── REQUIRE_APPROVAL: high-stakes mutations (priority 20–29) ───────────
+
+  - id: approval_update_salary
+    priority: 20
+    description: "Salary changes require human approval"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "update_salary"
+    enforce:
+      disposition: "require_approval"
+      reason: "Salary changes require compliance officer approval"
+      require_role: "compliance_officer"
+      severity: "high"
+      ttl_seconds: 900
+
+  - id: approval_transfer_funds_large
+    priority: 21
+    description: "Fund transfers over €10 000 require approval"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "transfer_funds"
+      - field: "parameters.amount"
+        operator: "greater_than"
+        value: 10000
+    enforce:
+      disposition: "require_approval"
+      reason: "Large fund transfers require compliance officer approval"
+      require_role: "compliance_officer"
+      severity: "high"
+      ttl_seconds: 900
+
+  - id: approval_modify_credit_limit
+    priority: 22
+    description: "Credit limit changes require approval"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "modify_credit_limit"
+    enforce:
+      disposition: "require_approval"
+      reason: "Credit limit changes require compliance officer approval"
+      require_role: "compliance_officer"
+      severity: "high"
+      ttl_seconds: 900
+
+  # ── ALLOW_WITH_FLAG: ambient-signal anomalies (priority 40–49) ─────────
+
+  - id: flag_off_hours_access
+    priority: 40
+    description: "Flag read operations when caller signals off-hours access (00:00–06:59 UTC)"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "read_record"
+      - field: "entity.request_hour_utc"
+        operator: "less_than"
+        value: 7
+    enforce:
+      disposition: "allow_with_flag"
+      reason: "Read permitted but off-hours access flagged for audit review"
+      severity: "medium"
+
+  - id: flag_pii_access_no_ticket
+    priority: 41
+    description: "Flag PII field access when no support ticket is linked"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "access_pii_fields"
+    enforce:
+      disposition: "allow_with_flag"
+      reason: "PII access flagged for audit review — ensure ticket linkage"
+      severity: "medium"
+
+  - id: flag_repeated_export
+    priority: 42
+    description: "Flag export_data when the agent has already exported recently"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "export_data"
+      - field: "entity.prior_exports_last_hour"
+        operator: "greater_than"
+        value: 3
+    enforce:
+      disposition: "allow_with_flag"
+      reason: "Repeated exports within the hour flagged for audit review"
+      severity: "medium"
+
+  # ── ALLOW: normal read operations (priority 60–69) ─────────────────────
+
+  - id: allow_read_record
+    priority: 60
+    description: "Allow single-record reads for support operations"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "read_record"
+    enforce:
+      disposition: "allow"
+      reason: "Single-record read is within authorized support scope"
+
+  - id: allow_get_account_balance
+    priority: 61
+    description: "Allow read-only account balance queries"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "get_account_balance"
+    enforce:
+      disposition: "allow"
+      reason: "Balance query is a read-only operation"
+
+  - id: allow_list_transactions
+    priority: 62
+    description: "Allow bounded transaction history reads"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "list_recent_transactions"
+    enforce:
+      disposition: "allow"
+      reason: "Bounded transaction read is within authorized support scope"
+
+  - id: allow_export_data_scoped
+    priority: 63
+    description: "Allow scoped internal exports (no external destination)"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "export_data"
+    enforce:
+      disposition: "allow_with_flag"
+      reason: "Internal export permitted with audit flag"
+      severity: "low"

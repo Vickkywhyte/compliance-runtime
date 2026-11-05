@@ -44,3 +44,36 @@ rules:
     enforce:
       disposition: "allow"
       reason: "Refund within authorized limit"
+
+  - id: flag_balance_check
+    priority: 110
+    description: "Allow balance checks; flag for access audit"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "check_balance"
+    enforce:
+      disposition: "allow_with_flag"
+      reason: "Balance check logged for access audit"
+
+  - id: flag_order_lookup
+    priority: 111
+    description: "Allow order lookups; flag for access audit"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "lookup_order"
+    enforce:
+      disposition: "allow_with_flag"
+      reason: "Order lookup logged for access audit"
+
+  - id: flag_send_email
+    priority: 112
+    description: "Allow outbound email actions; flag for review"
+    when:
+      - field: "action"
+        operator: "equals"
+        value: "send_email"
+    enforce:
+      disposition: "allow_with_flag"
+      reason: "Outbound email flagged for content review"

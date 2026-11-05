@@ -16,7 +16,7 @@ _DEMO = _POLICY_DIR / "demo_policy.yaml"
 def test_load_valid_policy() -> None:
     policy = load_policy(_DEMO)
     assert policy.name == "demo_policy"
-    assert len(policy.rules) == 3
+    assert len(policy.rules) == 6
 
 
 def test_load_missing_file_raises() -> None:

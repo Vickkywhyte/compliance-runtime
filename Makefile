@@ -75,7 +75,7 @@ demo: ## Run the end-to-end demo (Phase 9)
 	$(PYTHON) scripts/09_demo.py --reset
 
 demo-noserve: ## Run the demo without the dashboard hint
-	$(PYTHON) scripts/09_demo.py --reset --no-serve
+	$(PYTHON) scripts/09_demo.py --reset --no-serve 2>&1 | grep -v '^{'
 
 dossier-selftest: ## Phase 9 dossier self-test
 	$(PYTHON) scripts/09_dossier_selftest.py

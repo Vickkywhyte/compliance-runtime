@@ -23,7 +23,14 @@ def render_text(report: EvalReport) -> str:
         value = report.aggregate_metrics[name]
         ci = report.aggregate_ci.get(name)
         ci_str = f"  CI[{ci[0]:.3f}, {ci[1]:.3f}]" if ci else ""
-        lines.append(f"    {name:<28} {value:>12.4f}{ci_str}")
+        # Show sub-millisecond timing as "< 0.001" rather than "0.0000"
+        if value == 0.0:
+            value_str = f"{'0.0000':>12}"
+        elif 0 < value < 0.0001:
+            value_str = f"{'< 0.0001':>12}"
+        else:
+            value_str = f"{value:>12.4f}"
+        lines.append(f"    {name:<28} {value_str}{ci_str}")
     correct = sum(1 for e in report.per_entry if e["correct"])
     lines.append("")
     lines.append(f"  Correct dispositions: {correct}/{report.n_entries}")

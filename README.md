@@ -91,6 +91,19 @@ project is a working, measured, security-first answer.
 - **Attest.** The evidence chain verifies offline with only the public key, and
   exports as a PDF dossier mapping records to EU AI Act Article 12 obligations.
 
+## Why no LLM in the critical path matters
+
+Policy evaluation consults no language model. This is a deliberate safety
+property (ADR-013), not a capability limitation. An LLM-based enforcer adds
+three failure modes that a rules engine eliminates: (1) **non-determinism** —
+the same action can be allowed in one call and denied in the next; (2)
+**hallucinated justifications** — the model produces a plausible-sounding
+reason that doesn't match the actual policy; (3) **prompt injection via
+parameters** — a carefully crafted tool-call argument could instruct the
+model to approve an action it should deny. Rule-based evaluation is
+auditable line by line, produces the same decision every time, and cannot
+be persuaded by input content.
+
 ## The rogue refund scenario
 
 A support agent, driven by an LLM, decides to issue a **€1,200 refund** to a
@@ -107,6 +120,42 @@ agent receives a structured denial with the rule id and the matching evidence,
 and escalates instead of paying out. A signed, hash-chained `ActionRecord` is
 written capturing the attempt, the policy version, and the decision. Net loss:
 **zero**. Traceability: **complete and cryptographically verifiable**.
+
+## The approval gate — human in the loop
+
+When a rule returns `require_approval`, the runtime pauses the action and
+creates an `ApprovalRequest`. The agent gets back a structured pending
+response. A human reviews it in the Streamlit dashboard (or via the SDK)
+and either approves, modifies+approves, or denies.
+
+```python
+from compliance_runtime.interception.sdk import ToolExecutor
+
+executor = ToolExecutor(db_path="data/runtime.db", keys_dir="~/.compliance-runtime/keys")
+
+# Agent tries to issue a large refund
+result = executor.execute(
+    action="issue_refund",
+    parameters={"customer_id": "cust_8842", "amount": 1200},
+    agent_id="support_agent_v3",
+    session_id="sess_demo",
+    entity_context={"fraud_flags": []},
+)
+
+print(result.disposition)       # "require_approval"
+print(result.approval_id)       # "appr_abc123"
+print(result.reason)            # "Refunds over €500 require compliance sign-off"
+# → agent blocks; human reviewer opens the dashboard
+# → reviewer approves → agent is notified and proceeds
+# → every step is a signed hash-chain record
+```
+
+The state machine enforces single-winner semantics under concurrent
+access: optimistic locking ensures two reviewers racing on the same
+request produce exactly one decision. Terminal states (`approved`,
+`denied`, `modified_approved`, `expired`) are immutable. An expired
+request (default TTL 900 s) auto-denies — the agent never hangs
+indefinitely.
 
 ## Evaluation — the differentiator
 
@@ -139,6 +188,12 @@ target; a 20-entry mini benchmark ships in-repo and runs via `make eval-mini`.
 | Operational | evidence_write_p50_ms | ≤ 20 |
 | Operational | cost_per_1k_actions_usd | 0.00 |
 
+> **Note on `make eval-mini`:** The in-repo mini benchmark has 20 entries covering
+> the demo policy's action space. The targets above are stated for the full 200+
+> entry benchmark; the mini is a sanity check, not a production claim. Run
+> `make eval-mini` to verify the pipeline produces a clean report with correct
+> dispositions on the included entries.
+
 Actual runs are written to `results/evals/{timestamp}.json`. See
 [`claude_chat/06_EVAL_SPEC.md`](claude_chat/06_EVAL_SPEC.md) for every formula.
 
@@ -148,15 +203,20 @@ The runtime treats itself as a high-value target. A STRIDE threat model is
 enforced from Phase 1, with P0 controls implemented, not deferred:
 
 - **Policy bypass (T-01):** strict typing, missing-field-denies, and a
-  15-scenario bypass suite.
+  15-scenario bypass suite (`tests/security/test_policy_bypass.py`).
 - **Evidence tampering (T-03):** SQLite append-only triggers reject
   UPDATE/DELETE on `action_records`, `approval_decisions`, `audit_events`; a
-  SHA-256 chain and Ed25519 signatures detect any change that bypasses them.
+  SHA-256 chain and Ed25519 signatures detect any change that bypasses them
+  (`tests/security/test_evidence_immutability.py`).
 - **Key compromise (T-04):** signing key is mode 0600, never logged, loaded
-  only inside `evidence/signing.py`.
+  only inside `evidence/signing.py` (`tests/security/test_key_safety.py`).
 - **Approval bypass (T-05):** single-writer service, optimistic locking,
-  same-transaction audit, terminal states, single-winner concurrency.
-- **DoS (T-07):** per-agent rate limiting with drop metrics.
+  same-transaction audit, terminal states, single-winner concurrency
+  (`tests/security/test_approval_integrity.py`).
+- **DoS (T-07):** per-agent rate limiting with drop metrics
+  (`tests/security/test_rate_limit.py`).
+- **Prompt injection (T-02):** regex filter + HTML escaping in dashboard
+  (`tests/security/test_injection.py`).
 - **Malicious dependency (T-10):** exact-pinned lockfile, `pip-audit` in CI.
 
 See [`docs/security.md`](docs/security.md) for the public summary and
@@ -269,6 +329,26 @@ raw: bytes = read_chain_raw("data/runtime.db")
 None of these functions alter existing logic; they delegate entirely to the
 core `policy.engine`, `evidence.recorder`, and `storage.action_records`
 modules.
+
+## Independent verification — governance measurement harness
+
+The runtime's evidence chain can be verified by anyone holding the public
+key, with no access to this codebase. A companion project,
+[governance-measurement-harness](https://github.com/Vickkywhyte/governance-measurement-harness),
+takes this further: it runs 12 labeled test vectors through the live policy
+engine, commits every result to the hash chain as a signed measurement receipt,
+and ships a **standalone verifier** (`verifier/`) that imports only Python
+stdlib and `cryptography` — no harness code, no compliance-runtime code.
+
+```bash
+# In the governance-measurement-harness repo:
+python -m harness --keys-dir ./keys --db ./chain.db   # run 12 test vectors
+python -m verifier --db ./chain.db --pubkey ./keys/verification_key.pem  # independent verify
+```
+
+An auditor can copy `verifier/` to a fresh machine, `pip install cryptography`,
+and re-derive the same accuracy / firing-offense / friction metrics that the
+harness reported — without trusting the harness, the runtime, or you.
 
 ## The 30-second pitch
 

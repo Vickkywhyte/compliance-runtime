@@ -92,7 +92,32 @@ inapplicable to this project:
 Any new advisory must be triaged and either fixed or documented here with a
 justification. Blanket ignores are not permitted.
 
-## 7. Full model
+## 7. Security test coverage
+
+Each threat is verified by a dedicated test file in `tests/security/`:
+
+| Threat / control group | Test file | Scenarios |
+|---|---|---|
+| Policy bypass (T-01) | `test_policy_bypass.py` | 15 malformed-call scenarios |
+| Prompt injection (T-02) | `test_injection.py` | Script tags, newline injection, LLM markers |
+| Evidence immutability (T-03) | `test_evidence_immutability.py` | Direct SQL UPDATE/DELETE attempts |
+| Key safety (T-04) | `test_key_safety.py` | Private key not in logs/exports |
+| Approval integrity (T-05) | `test_approval_integrity.py` | Race conditions, terminal states, TTL |
+| Config integrity (T-06) | `test_policy_integrity.py` | Invalid policy rejected on startup |
+| DoS resistance (T-07) | `test_rate_limit.py` | Rate limit enforcement + drop metrics |
+| Export safety (T-08) | `test_export_safety.py` | PII exclusion from dossier |
+| Dependency safety (T-10) | `test_dependency_pinning.py` + `pip-audit` in CI | Lockfile coverage |
+| Log injection (T-12) | `test_log_injection.py` | Newline-in-parameter single-entry test |
+
+Run the full security suite:
+
+```bash
+pytest tests/security/ -v
+```
+
+All 9 security test files pass on every PR (CI-enforced).
+
+## 8. Full model
 
 See [`claude_chat/07_SECURITY_MODEL.md`](../claude_chat/07_SECURITY_MODEL.md)
 for the STRIDE threat model, the full P0/P1/P2 control catalog (C-01…C-46),

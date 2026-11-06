@@ -20,8 +20,9 @@ attrs==26.1.0
     # via
     #   jsonschema
     #   referencing
-certifi==2026.7.22
+certifi==2026.10.23
     # via
+    #   compliance-runtime (pyproject.toml)
     #   httpcore
     #   httpx
     #   requests
@@ -85,8 +86,9 @@ packaging==26.3
     #   streamlit
 pandas==3.0.6
     # via streamlit
-pillow==12.3.0
+pillow==13.0.0
     # via
+    #   compliance-runtime (pyproject.toml)
     #   reportlab
     #   streamlit
 plotly==7.1.0
@@ -135,7 +137,7 @@ starlette==1.8.0
     # via
     #   fastapi
     #   streamlit
-streamlit==1.66.0
+streamlit==1.67.0
     # via compliance-runtime (pyproject.toml)
 structlog==26.1.0
     # via compliance-runtime (pyproject.toml)

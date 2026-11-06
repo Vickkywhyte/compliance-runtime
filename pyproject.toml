@@ -26,6 +26,9 @@ dependencies = [
     "streamlit>=1.40",
     "plotly>=5.20",
     "reportlab>=4.2",
+    # Explicit version floors to satisfy pip-audit (transitive deps with known CVEs).
+    "pillow>=13.0.0",
+    "certifi>=2026.10.18",
 ]
 
 [project.optional-dependencies]

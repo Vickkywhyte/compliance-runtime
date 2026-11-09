@@ -89,6 +89,12 @@ inapplicable to this project:
   distributions, and uses `setuptools` only for editable local installs. The
   vulnerability path is unreachable.
 
+- **GHSA-xm3j-9gf7-h52w** (`setuptools 79.0.1`): Present in the GitHub Actions
+  runner's pre-installed Python environment, not in `requirements.lock`. It
+  cannot be removed or pinned away by this project's dependency management.
+  Mitigated by the fact that `setuptools` is only used for editable installs
+  in CI, not in production or the distributed package.
+
 Any new advisory must be triaged and either fixed or documented here with a
 justification. Blanket ignores are not permitted.
 

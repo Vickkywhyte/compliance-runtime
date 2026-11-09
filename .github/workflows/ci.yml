@@ -45,7 +45,10 @@ jobs:
       - name: Run pip-audit (fail on any known advisory)
         # PYSEC-2026-3447 (setuptools sdist/MANIFEST.in) is inapplicable:
         # we publish no packages and build no sdists. See docs/security.md.
-        run: pip-audit --strict --ignore-vuln PYSEC-2026-3447
+        # GHSA-xm3j-9gf7-h52w (setuptools 79.0.1) is pre-installed in the
+        # GitHub Actions runner environment and not in requirements.lock;
+        # it cannot be pinned away. See docs/security.md.
+        run: pip-audit --strict --ignore-vuln PYSEC-2026-3447 --ignore-vuln GHSA-xm3j-9gf7-h52w
 
   docker-build:
     runs-on: ubuntu-latest

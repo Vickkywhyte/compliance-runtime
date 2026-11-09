@@ -40,6 +40,8 @@ jobs:
           python-version: "3.11"
       - name: Install pip-audit
         run: pip install pip-audit
+      - name: Upgrade runner setuptools (GHSA-xm3j-9gf7-h52w fix)
+        run: pip install --upgrade "setuptools>=84.1.0"
       - name: Install project deps from lockfile
         run: pip install -r requirements.lock
       - name: Run pip-audit (fail on any known advisory)

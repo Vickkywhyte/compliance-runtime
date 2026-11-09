@@ -40,17 +40,13 @@ jobs:
           python-version: "3.11"
       - name: Install pip-audit
         run: pip install pip-audit
-      - name: Upgrade runner setuptools (GHSA-xm3j-9gf7-h52w fix)
-        run: pip install --upgrade "setuptools>=84.1.0"
-      - name: Install project deps from lockfile
-        run: pip install -r requirements.lock
+      - name: Upgrade runner setuptools
+        run: pip install --upgrade setuptools
       - name: Run pip-audit (fail on any known advisory)
+        # Scan only our lockfile, not the runner's global environment.
         # PYSEC-2026-3447 (setuptools sdist/MANIFEST.in) is inapplicable:
         # we publish no packages and build no sdists. See docs/security.md.
-        # GHSA-xm3j-9gf7-h52w (setuptools 79.0.1) is pre-installed in the
-        # GitHub Actions runner environment and not in requirements.lock;
-        # it cannot be pinned away. See docs/security.md.
-        run: pip-audit --strict --ignore-vuln PYSEC-2026-3447 --ignore-vuln GHSA-xm3j-9gf7-h52w
+        run: pip-audit -r requirements.lock --strict --ignore-vuln PYSEC-2026-3447
 
   docker-build:
     runs-on: ubuntu-latest

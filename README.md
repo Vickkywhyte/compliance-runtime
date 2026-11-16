@@ -223,6 +223,47 @@ See [`docs/security.md`](docs/security.md) for the public summary and
 [`claude_chat/07_SECURITY_MODEL.md`](claude_chat/07_SECURITY_MODEL.md) for the
 full model and the C-01…C-46 control catalog.
 
+## Limitations and roadmap
+
+This is a v1 built to prove an enforcement-and-evidence approach, and it is
+explicit about its edges. The limits below are written down, not hidden. The
+fuller treatment lives in [`docs/security.md`](docs/security.md) §5 and
+[`PROJECT_BIBLE.md`](PROJECT_BIBLE.md) §6.
+
+- **Evaluation scope.** The enforcement targets in the table above (precision
+  ≥ 0.90, recall ≥ 0.95, and the rest) are defined against a 200+ entry
+  hand-labeled benchmark that is not yet included in the repo. What ships today
+  is the 20-entry mini benchmark, which exercises the demo policy's action
+  space and confirms the pipeline produces a clean report. Read the enforcement
+  numbers as stated goals checked on the mini set, not as production accuracy
+  claims at full scale.
+- **The prompt-injection filter is deterministic, not learned.** It scans
+  tool-call parameters for known injection markers (`policy/injection.py`). That
+  runs in constant time with no model call and catches the common cases, but a
+  novel phrasing that avoids the markers can pass it. An LLM-based detector was
+  considered and deliberately deferred to keep the critical path free of any
+  model (ADR-013); it is a candidate for a non-blocking, out-of-path check in a
+  later version.
+- **Single tenant, no end-user authentication.** v1 runs for one tenant and
+  uses synthetic actor identities rather than authenticated users.
+  Multi-tenancy and real authentication are planned for v2.
+- **Key protection is host-level.** The Ed25519 signing key is a mode-0600 file
+  loaded only inside `evidence/signing.py`, so a full host compromise implies
+  key compromise. Hardware-backed keys (HSM/KMS) and SCITT-style external
+  attestation are v2 work.
+- **The runtime enforces your policy; it does not check that your policy is
+  correct.** Given a correct policy it blocks the right calls and records the
+  evidence. It cannot tell you that the policy itself expresses the rule you
+  intended. Policy quality stays with the operator, which is why every decision
+  records the exact policy version that produced it.
+- **Network perimeter is assumed.** The runtime expects to sit on localhost or
+  behind a reverse proxy, not exposed directly to the public internet.
+- **Minor internal coupling.** A few read-only accesses still reach into
+  internal attributes (for example, the dashboard reads the loaded policy set
+  directly). These are documented code-quality items slated for a v2 refactor
+  that exposes public properties. They do not affect enforcement or evidence
+  integrity.
+
 ## Quick start
 
 ```bash
